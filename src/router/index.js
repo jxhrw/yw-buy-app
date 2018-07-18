@@ -9,9 +9,14 @@ Vue.use(Router);
 
 export default new Router({
 
-  mode: 'history',
-  scrollBehavior () {
-    return { x: 0, y: 0 }
+  //mode: 'history',
+  scrollBehavior (to, from, savedPosition) {
+    // return { x: 0, y: 0 }
+    if (savedPosition) {
+      return savedPosition
+    } else {
+      return { x: 0, y: 0 }
+    }
   },
   routes: [
     {
@@ -20,11 +25,18 @@ export default new Router({
     },
     {
       path: '/test1',
-      component: Test1
+      component: resolve => { return require([ '@/views/test1' ], resolve) },
+      meta: {
+        keepAlive: true
+      }
+      
     },
     {
       path: '/test2',
-      component: Test2
+      component: resolve => { return require([ '@/views/test2' ], resolve) },
+      meta: {
+        keepAlive: false
+      }
     },
   ]
 })

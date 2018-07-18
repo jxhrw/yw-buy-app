@@ -20,17 +20,26 @@ router.beforeEach(function (to, from, next) {
   const toIndex = history.getItem(to.path);
   const fromIndex = history.getItem(from.path);
 
-  if (toIndex) {
+  
+  console.log(fromIndex,toIndex);
+  if(!fromIndex || parseInt(fromIndex, 10)<1){
+    store.commit('UPDATE_DIRECTION', {direction: 'firstward'});
+    if(!toIndex){
+      ++historyCount;
+      history.setItem('count', historyCount);
+      to.path !== '/' && history.setItem(to.path, historyCount);
+    }
+  }else if (toIndex) {
     if (!fromIndex || parseInt(toIndex, 10) > parseInt(fromIndex, 10) || (toIndex === '0' && fromIndex === '0')) {
-      store.commit('UPDATE_DIRECTION', {direction: 'forward'})
+      store.commit('UPDATE_DIRECTION', {direction: 'in'})//forward,向前
     } else {
-      store.commit('UPDATE_DIRECTION', {direction: 'reverse'})
+      store.commit('UPDATE_DIRECTION', {direction: 'out'})//reverse,向后
     }
   } else {
     ++historyCount;
     history.setItem('count', historyCount);
     to.path !== '/' && history.setItem(to.path, historyCount);
-    store.commit('UPDATE_DIRECTION', {direction: 'forward'})
+    store.commit('UPDATE_DIRECTION', {direction: 'in'})//forward,向前
   }
   if (/\/http/.test(to.path)) {
     let url = to.path.split('http')[1];

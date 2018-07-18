@@ -1,42 +1,49 @@
 <template>
   <div id="app">
-    <transition :name="'vux-pop-' + (direction === 'forward' ? 'in' : 'out')">
+    <transition :name="'vux-pop-' + (direction === 'firstward' ? 'er' :direction)">
       <keep-alive>
-      <router-view class="router-view" ></router-view>
+        <router-view class="router-view"></router-view>
       </keep-alive>
     </transition>
   </div>
 </template>
 
 <script>
-  import { mapState,mapActions} from 'vuex'
+  import {
+    mapState,
+    mapActions
+  } from 'vuex'
   import Vue from "vue"
   export default {
     name: 'app',
-    data () {
-      return {
-      }
+    data() {
+      return {}
     },
-    components : {
+    components: {
 
     },
-    computed:{
+    computed: {
       ...mapState({
         direction: state => state.mutations.direction,
       })
     },
   }
+
 </script>
 
 <style scoped>
-  #app{
+  #app {
     width: 100%;
-    height:100%;
+    height: 100%;
   }
-  .vux-pop-out-enter-active,
+
+  /* .vux-pop-in-leave-active
+  .vux-pop-out-enter-active, */
+
+  /* 以上效果不好，去掉 */
+
   .vux-pop-out-leave-active,
-  .vux-pop-in-enter-active,
-  .vux-pop-in-leave-active {
+  .vux-pop-in-enter-active {
     will-change: transform;
     transition: all 300ms;
     height: 100%;
@@ -65,14 +72,18 @@
     opacity: 0;
     transform: translate3d(-100%, 0, 0);
   }
+
 </style>
 
 <style>
-  body,html{
-    width:100%;
-    height:100%;
+  body,
+  html {
+    width: 100%;
+    height: 100%;
   }
-  *{
-    margin:0;
+
+  * {
+    margin: 0;
   }
+
 </style>

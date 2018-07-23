@@ -1,57 +1,37 @@
 <template>
-  <div id="test2">
-    <a href="javascript:history.back()">上一页</a>
-    <div style="height:500px"></div>
-    <router-link to="/" tag="p">上一页</router-link>
+  <div id="shopDetail">
+    <mu-carousel hide-controls :cycle='false'>
+  <mu-carousel-item>
+    <img src="../assets/ec.jpeg">
+  </mu-carousel-item>
+  <mu-carousel-item>
+    <img src="../assets/timg.jpg">
+  </mu-carousel-item>
+  <mu-carousel-item>
+    <img src="../assets/logo.png">
+  </mu-carousel-item>
+  <mu-carousel-item>
+    <img src="../assets/timg.jpg">
+  </mu-carousel-item>
+</mu-carousel>
   </div>
 </template>
 
 <script>
-  import {
-    liunst
-  } from '../api/api'
+
   export default {
-    data() {
-      return {}
-    },
-    components: {},
-    computed: {},
-    watch: {},
-    created() {
-
-    },
-    methods: {
-      requireda(data) {
-        liunst(JSON.stringify(data)).then(res => {
-
-        })
-      }
-    },
-    activated: function () {
-      this.requireda({
-        "pagecnt": 5,
-        "pageno": 2,
-        "tags": ["隐居"]
-      });
-    },
-    mounted: function () {
-
+  data () {
+    return {
+   
     }
+  },
+  methods: {
+    
   }
-
+};
 </script>
 
 <style scoped>
-  p {
-    text-align: center;
-    color: #fff;
-  }
 
-  #test2 {
-    background: url("../assets/timg.jpg");
-    background-size: 100% 100%;
-    width: 100%;
-    height: 300%;
-  }
 
 </style>

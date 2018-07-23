@@ -9,6 +9,7 @@
 </template>
 
 <script>
+//该跳转结构的问题：不能用fixed定位，不然返回页面的话fixed元素会过早出现，可以使用absolute替代，需设置页面最高100%，overflow:auto
   import {
     mapState,
     mapActions
@@ -27,9 +28,38 @@
         direction: state => state.mutations.direction,
       })
     },
+    mounted() {
+      //rem html：font-size自适应
+      (function (doc, win) {
+        var docEl = doc.documentElement,
+          resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
+          recalc = function () {
+            var clientWidth = docEl.clientWidth;
+            if (!clientWidth) return;
+            //固定宽度750px 基准像素100px
+            docEl.style.fontSize = 100 * (clientWidth / 750) + 'px';
+          };
+
+        if (!doc.addEventListener) return;
+        win.addEventListener(resizeEvt, recalc, false);
+        doc.addEventListener('DOMContentLoaded', recalc, false);
+      })(document, window);
+    },
   }
 
 </script>
+
+<style>
+  html {
+    font-size: 50px;
+  }
+  #app>div{
+    position: relative;
+    font-size: .26rem;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+</style>
 
 <style scoped>
   #app {
@@ -45,7 +75,7 @@
   .vux-pop-out-leave-active,
   .vux-pop-in-enter-active {
     will-change: transform;
-    transition: all 300ms;
+    transition: all 200ms;
     height: 100%;
     top: 0;
     position: absolute;

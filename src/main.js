@@ -10,6 +10,29 @@ import store from './store/'
 import directives from './directives/touch'
 directives(Vue);
 
+// 引入公用方法
+import publicJs from './public/publicJs'
+Vue.use(publicJs);
+
+//css组件
+import MuseUI from 'muse-ui';
+import 'muse-ui/dist/muse-ui.css';
+Vue.use(MuseUI);
+
+//轮播图的插件（muse-ui的轮播图效果不好）
+import wcSwiper from 'wc-swiper'
+import 'wc-swiper/style.css'
+Vue.use(wcSwiper);
+
+//自定义组件
+import Prolist from './components/proList'
+import ywBtn from './components/ywButton'
+import ywLoading from './components/ywLoading'
+import scrollToTop from './components/scrollToTop'
+Vue.component('Prolist', Prolist);
+Vue.component('ywBtn', ywBtn);
+Vue.component('ywLoading', ywLoading);
+Vue.component('scrollToTop', scrollToTop);
 
 Vue.config.productionTip = false;
 // simple history management
@@ -20,8 +43,6 @@ router.beforeEach(function (to, from, next) {
   const toIndex = history.getItem(to.path);
   const fromIndex = history.getItem(from.path);
 
-  
-  console.log(fromIndex,toIndex);
   if(!fromIndex || parseInt(fromIndex, 10)<1){
     store.commit('UPDATE_DIRECTION', {direction: 'firstward'});
     if(!toIndex){

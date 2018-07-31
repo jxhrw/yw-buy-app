@@ -29,17 +29,18 @@ import Prolist from './components/proList'
 import ywBtn from './components/ywButton'
 import ywLoading from './components/ywLoading'
 import scrollToTop from './components/scrollToTop'
+import ywBar from './components/ywTopBar'
 Vue.component('Prolist', Prolist);
 Vue.component('ywBtn', ywBtn);
 Vue.component('ywLoading', ywLoading);
 Vue.component('scrollToTop', scrollToTop);
+Vue.component('ywBar', ywBar);
 
 Vue.config.productionTip = false;
 // simple history management
 const history = window.sessionStorage;
 let historyCount = history.getItem('count') * 1;
 router.beforeEach(function (to, from, next) {
-
   const toIndex = history.getItem(to.path);
   const fromIndex = history.getItem(from.path);
 
@@ -53,8 +54,10 @@ router.beforeEach(function (to, from, next) {
   }else if (toIndex) {
     if (!fromIndex || parseInt(toIndex, 10) > parseInt(fromIndex, 10) || (toIndex === '0' && fromIndex === '0')) {
       store.commit('UPDATE_DIRECTION', {direction: 'in'})//forward,向前
+      to.meta.isBack = false;
     } else {
       store.commit('UPDATE_DIRECTION', {direction: 'out'})//reverse,向后
+      to.meta.isBack = true;
     }
   } else {
     ++historyCount;

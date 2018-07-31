@@ -5,6 +5,10 @@ import * as types from './types'
 import getters from './getters'
 const state = {
   direction: 'forward',
+  token:'1323',
+  selectJson:[],
+  selectPage:{},
+
 };
 
 const mutations = {

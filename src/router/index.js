@@ -8,8 +8,6 @@ Vue.use(Router);
 
 
 export default new Router({
-
-  mode: 'history',
   scrollBehavior (to, from, savedPosition) {
     // return { x: 0, y: 0 }
     console.log(savedPosition)
@@ -22,28 +20,54 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect:'/list'
+      redirect:'/shopOnline'
     },
     {
       path: '/list',
       component: resolve => { return require([ '@/views/shopList' ], resolve) },
       meta: {
-        keepAlive: true
+        keepAlive: true,
+        isBack:false,
       }
-      
     },
     {
       path: '/shopDetail',
       component: resolve => { return require([ '@/views/shopDetail' ], resolve) },
       meta: {
-        keepAlive: false
+        keepAlive: true,
+        isBack:false,
       }
     },
     {
-      path: '/test2',
-      component: resolve => { return require([ '@/views/test2' ], resolve) },
+      path: '/shopDetail2',
+      component: resolve => { return require([ '@/views/shopDetail' ], resolve) },
       meta: {
-        keepAlive: false
+        keepAlive: true,
+        isBack:false,
+      }
+    },
+    {
+      path: '/shopOnline',
+      component: resolve => { return require([ '@/views/shopOnline' ], resolve) },
+      meta: {
+        keepAlive: true,
+        isBack:false,
+      }
+    },
+    {
+      path: '/notice',
+      component: resolve => { return require([ '@/views/notice' ], resolve) },
+      meta: {
+        keepAlive: true,
+        isBack:false,
+      }
+    },
+    {
+      path: '/noticeDetail',
+      component: resolve => { return require([ '@/views/noticeDetail' ], resolve) },
+      meta: {
+        keepAlive: true,
+        isBack:false,
       }
     },
   ]

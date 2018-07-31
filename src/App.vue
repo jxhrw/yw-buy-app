@@ -1,15 +1,15 @@
 <template>
   <div id="app">
     <transition :name="'vux-pop-' + (direction === 'firstward' ? 'er' :direction)">
-      <keep-alive>
-        <router-view class="router-view"></router-view>
-      </keep-alive>
+        <keep-alive>
+          <router-view class="router-view"></router-view>
+        </keep-alive>
     </transition>
   </div>
 </template>
 
 <script>
-//该跳转结构的问题：不能用fixed定位，不然返回页面的话fixed元素会过早出现，可以使用absolute替代，需设置页面最高100%，overflow:auto
+  //该跳转结构的问题：不能用fixed定位，不然返回页面的话fixed元素会过早出现，可以使用absolute替代，需设置页面最高100%，overflow:auto
   import {
     mapState,
     mapActions
@@ -53,12 +53,21 @@
   html {
     font-size: 50px;
   }
-  #app>div{
+
+#app>div {
     position: relative;
     font-size: .26rem;
     overflow: auto;
     -webkit-overflow-scrolling: touch;
   }
+
+
+  @font-face {
+    /* font-properties */
+    font-family: DINAlternate-Bold;
+    src: url('assets/font/DIN_Alternate_Bold.ttf');
+  }
+
 </style>
 
 <style scoped>

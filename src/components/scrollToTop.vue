@@ -19,7 +19,7 @@
   .backTop {
     width: 1rem;
     height: 1rem;
-    background: rgba(0, 0, 0, 0.9);
+    background: url('../assets/imgs/iv_move_to_top.png') no-repeat center/contain;
     position: absolute;
     bottom: 1rem;
     right: 1rem;

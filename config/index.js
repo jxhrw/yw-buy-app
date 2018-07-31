@@ -29,7 +29,8 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/api': {
-        target: 'http://123.57.213.200:14502',
+        target: 'http://59.110.18.41:8402',
+        // target:'http://59.110.18.41:8402/message-provider-service',
         changeOrigin: true,
         pathRewrite:  {
           '^/api': ''

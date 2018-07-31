@@ -1,8 +1,13 @@
 <template>
   <div id="shopList">
     <ywLoading :loading='requesting'></ywLoading>
-    <scrollToTop :scTop="sctop" @click.native="goMyTop()"></scrollToTop>
+    <scrollToTop :scTop="true" @click.native="goMyTop()"></scrollToTop>
     <div class="buttons">
+      <div class="btnFlex">
+        <form action="javascript:;" class="searchForm">
+          <input type="search" @keyup.enter="search()" v-model="searchTxt" placeholder="手表名称/品牌/系列/型号" />
+        </form>
+      </div>
       <div class="btnFlex">
         <ywBtn text="综合" class="tsBtn" :isActive='btnActive.all' @click.native="selectOrder(0)"></ywBtn>
         <ywBtn type="sort" text="价格" class="tsBtn" :isActive='btnActive.price.chosen' :sortType='btnActive.price.status' @click.native="selectOrder(1)"></ywBtn>
@@ -31,7 +36,7 @@
     <mu-paper class="demo-loadmore-wrap">
       <mu-container ref="container" class="demo-loadmore-content">
         <mu-load-more @refresh="refresh" :refreshing="refreshing" :loading="loading" @load="load">
-          <Prolist :items='pageItems' @scroll.native="scrollHandler"></Prolist>
+          <Prolist :items='pageItems' @scroll.native="scrollHandler" :isShare="true"></Prolist>
 
         </mu-load-more>
       </mu-container>
@@ -69,7 +74,7 @@
   export default {
     data() {
       return {
-        sctop:false,//滚动到顶部的按钮是否出现
+        sctop: false, //滚动到顶部的按钮是否出现
         fewTimes: 0, //页面第几次进入，刷新或第一次会在mounted里重置,其余次数获取scrollTop使页面回到离开位置
         listData: {
           category: 'watch',
@@ -78,6 +83,7 @@
           order: "",
           // userName: 'ybcs_manager',
         }, //列表请求参数
+        searchTxt: '', //搜索条件的文本
         pageInfo: {}, //分页信息
         pageItems: [], //分页内容
         brandConditions: [], //品牌
@@ -156,7 +162,7 @@
         queryDic(data).then(res => {
           let $this = this;
           this.ajaxResult(res, function () {
-              $this.priceConditions = res.data.body;
+            $this.priceConditions = res.data.body;
           });
         });
       },
@@ -177,6 +183,12 @@
           this.listData.index += 1;
           this.requireda(this.listData);
         }
+      },
+      //输入框搜索
+      search() {
+        console.log(this.searchTxt);
+        this.listData.text = this.searchTxt;
+        this.resetSelect();
       },
       //通过order排序的,type类型，分0综合，1价格，2上新时间，-1重置
       selectOrder(type) {
@@ -300,13 +312,13 @@
       scrollHandler() {
         //console.log(this.$refs.container.scrollTop)
         sessionStorage.setItem("shopListScrollTop", this.$refs.container.scrollTop);
-        if(this.$refs.container.scrollTop>300){
+        if (this.$refs.container.scrollTop > 300) {
           this.sctop = true;
-        }else{
+        } else {
           this.sctop = false;
         }
       },
-      goMyTop(){
+      goMyTop() {
         this.goTop(this.$refs.container);
       }
     },
@@ -368,7 +380,6 @@
 
   .buttons {
     position: absolute;
-    height: 2rem;
     width: 100%;
     top: 0;
     z-index: 1;
@@ -376,11 +387,10 @@
   }
 
   .btnFlex {
-    height: 50%;
+    height: .666rem;
     display: flex;
     justify-content: space-evenly;
     align-items: center;
-    border-bottom: 1px solid #bdbdbd;
     position: relative;
   }
 
@@ -415,6 +425,7 @@
     padding: 1rem 0.2rem 1rem 0.2rem;
     height: 100%;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .selectBox h6 {
@@ -465,6 +476,16 @@
     bottom: 0;
     height: 0.8rem;
     display: flex;
+  }
+
+  .searchForm {
+    width: 100%;
+    padding: 0 .3rem;
+  }
+
+  input[type=search] {
+    width: 100%;
+
   }
 
 </style>

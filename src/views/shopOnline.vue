@@ -5,8 +5,8 @@
     <scrollToTop :scTop="sctop" @click.native="goMyTop()" :style="{'position':'absolute'}"></scrollToTop>
 
     <div class="top-bar" id="top-bar" :style="{'position':'absolute'}">
-      <div style="float:left" class="topBtnLeft" @click="finish()"></div>
-      <div style="float:right" class="topBtnRight"></div>
+      <div v-if="isApp" style="float:left" class="topBtnLeft" @click="finish()"></div>
+      <div v-if="isApp" style="float:right" class="topBtnRight"></div>
       <form action="javascript:;" class="searchForm">
         <input type="search" @keyup.enter="search()" v-model="searchTxt" :placeholder="placeholder" />
       </form>
@@ -18,17 +18,17 @@
           <div class="headerBg" id="headerBg"></div>
           <div class="shopInfo" id="shopInfo">
             <div class="shopFlex">
-              <div class="logo" id="logo"></div>
+              <div class="logo" id="logo" :style="{'background-image':'url('+shopInfoTxt.fullLogoUrl+')'}"></div>
               <div class="shopTxt">
                 <h1>
-                  <a class="phone" href="tel:15657193590">
+                  <a class="phone" :href="'tel://'+shopInfoTxt.linkPhone">
                     <mu-icon value="phone"></mu-icon>
                     <span style="margin-top: 1px;">联系商家</span>
                   </a>
-                  华夏典当行
+                  {{shopInfoTxt.cnName}}
                 </h1>
-                <p>15657193590</p>
-                <p>浙江省杭州市余杭区乐富海邦园</p>
+                <p>{{shopInfoTxt.linkPhone}}</p>
+                <p>{{shopInfoTxt.address}}</p>
               </div>
             </div>
           </div>
@@ -53,7 +53,7 @@
         <mu-container ref="container" class="demo-loadmore-content">
           <!-- @refresh="refresh"  -->
           <mu-load-more :refreshing="refreshing" :loading="loading" @load="load">
-            <Prolist :items='pageItems' @scroll.native="scrollHandler" :isShare="true"></Prolist>
+            <Prolist :items='pageItems' @scroll.native="scrollHandler" :isShare="isApp"></Prolist>
           </mu-load-more>
         </mu-container>
       </mu-paper>
@@ -66,7 +66,8 @@
 <script>
   import {
     queryGoodsPage,
-    queryDic
+    queryDic,
+    loadShopInfo
   } from '../api/api'
   export default {
     data() {
@@ -82,6 +83,7 @@
         }, //列表请求参数
         searchTxt: '', //搜索条件的文本
         pageItems: [], //分页内容
+        isApp: true, //是否处于有表app里
         btnActive: {
           'price': {
             'chosen': false,
@@ -97,6 +99,7 @@
         placeholder: "\ue6d1 搜索", //&#xe6d1;
         fewTimes: 0, //页面第几次进入，刷新或第一次会在mounted里重置,其余次数获取scrollTop使页面回到离开位置
         pageInfo: {}, //分页信息
+        shopInfoTxt: {}, //店铺信息
         isLoading: false, //是否正在请求中
         refreshing: false, //下拉loading
         loading: false, //底部loading
@@ -145,7 +148,19 @@
               $this.pageItems = $this.pageItems.concat(res.data.body.page.items);
             }
           })
-
+        }).catch((err) => {
+          this.toast(`HTTP ${err.response.status}`);
+        })
+      },
+      //店铺信息
+      shopInfoFuc(data) {
+        let $bodyThis = this;
+        loadShopInfo(data).then(res => {
+          this.ajaxResult(res, function () {
+            $bodyThis.shopInfoTxt = res.data.body;
+          })
+        }).catch((err) => {
+          this.toast(`HTTP ${err.response.status}`);
         })
       },
       //重置、筛选
@@ -244,7 +259,12 @@
       //调用finish的回退
       finish() {
         try {
-          window.Android.finish();
+          let device = this.whichDevice();
+          if (device == "androidApp") {
+            window.Android.finish();
+          } else if (device == "iosApp") {
+
+          }
         } catch (err) {
           console.log(err);
         }
@@ -254,20 +274,24 @@
       // 监听,当路由发生变化的时候执行
       $route: {
         handler: function (val, oldVal) {
-          // console.log(window.location.href);
+          
         },
         // 深度观察监听
         deep: true
       }
     },
     mounted: function () {
-
+      let device = this.whichDevice();
+      if (device != "androidApp" && device != "iosApp") {
+        this.isApp = false;
+      }
     },
     activated() {
       let scrollTop = 0;
       let shopInfoCH = document.getElementById("shopInfo").offsetTop;
       let topBarHeight = document.getElementById("top-bar").clientHeight;
       this.fewTimes++;
+      this.shopInfoFuc(); //获取店铺信息
       if (!this.$route.meta.isBack || this.fewTimes <= 1) {
         //数据初始化
         this.listData = {
@@ -291,7 +315,7 @@
             },
           },
 
-        this.requireda(this.listData);
+          this.requireda(this.listData);
         this.$refs.bodyhtml.addEventListener('scroll', this.handleScroll);
         //top-bar背景图的位置
         scrollTop = 0;
@@ -372,7 +396,7 @@
 
   .headerBg {
     height: 2.2rem;
-    background: url("https://ss3.baidu.com/-rVXeDTa2gU2pMbgoY3K/it/u=229445282,848378121&fm=202&mola=new&crop=v1") no-repeat bottom/cover;
+    background: url("../assets/imgs/bg_shopOnline.png") no-repeat bottom/cover;
   }
 
   .top-bar {
@@ -381,7 +405,7 @@
     top: 0;
     width: 100%;
     z-index: 5;
-    background: url("https://ss3.baidu.com/-rVXeDTa2gU2pMbgoY3K/it/u=229445282,848378121&fm=202&mola=new&crop=v1") no-repeat bottom/cover;
+    background: url("../assets/imgs/bg_shopOnline.png") no-repeat bottom/cover;
   }
 
   .topBtnLeft,
@@ -437,7 +461,7 @@
   }
 
   .shopInfo .logo {
-    background: #ffffff;
+    background: #ffffff url('') no-repeat center center/cover;
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.08);
     border-radius: 6px;
     width: 1.50rem;

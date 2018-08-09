@@ -24,6 +24,10 @@ import wcSwiper from 'wc-swiper'
 import 'wc-swiper/style.css'
 Vue.use(wcSwiper);
 
+//toast引入组件
+// import { Toast } from 'mint-ui';
+import 'mint-ui/lib/style.css'
+
 //自定义组件
 import Prolist from './components/proList'
 import ywBtn from './components/ywButton'

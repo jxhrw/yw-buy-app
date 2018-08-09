@@ -6,12 +6,14 @@
   </header>
   <header v-else-if="type=='share'" class="shareHeader">
     <span class="iconShareBtn iconShareBtn1" @click="historyBack()"></span>
-    <span class="iconShareBtn iconShareBtn2"></span>
+    <span class="iconShareBtn iconShareBtn2" @click="share(goodsId)"></span>
   </header>
 </template>
 <script>
   // title 只有返回按钮和标题
   // share 只有返回按钮和分享按钮
+  // goodsId 商品id
+  // isFinish app为ture-退出webview,其他为false-返回上一页
   export default {
     props: {
       type: {
@@ -21,11 +23,36 @@
       title: {
         type: String,
         default: ""
+      },
+      isFinish: {
+        type: Boolean,
+        default: false
+      },
+      goodsId: {
+        type: Number,
+        default: 0
       }
     },
     methods: {
       historyBack() {
-        window.history.back();
+        if (this.isFinish) {
+          let device = this.whichDevice();
+          if (device == "androidApp") {
+            window.Android.finish();
+          } else if (device == "iosApp") {
+
+          }
+        } else {
+          window.history.back();
+        }
+      },
+      share(id) {
+        let device = this.whichDevice();
+        if (device == "androidApp") {
+          window.Android.getGoodsId(id);
+        } else if (device == "iosApp") {
+
+        }
       }
     }
   }

@@ -25,6 +25,8 @@
           this.ajaxResult(res, function () {
             $this.info = res.data.body;
           });
+        }).catch((err)=>{
+          this.toast(`HTTP ${err.response.status}`);
         });
       },
       initData() {
@@ -32,14 +34,14 @@
       }
     },
     mounted() {
-this.initData();
+
+    },
+    activated() {
+      this.initData();
       let afficheId = this.$route.query.id;
       this.detailInfo({
         'afficheId': afficheId
       });
-    },
-    activated() {
-      
     },
   };
 
@@ -74,6 +76,10 @@ this.initData();
     font-size: .28rem;
     color: #999999;
     line-height: .38rem;
+  }
+
+  .content .txt img {
+    max-width: 100%;
   }
 
 </style>

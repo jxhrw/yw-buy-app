@@ -9,7 +9,7 @@
           <p class="itPrice">
             <span>￥</span>{{item.retailPriceShow}}</p>
           <p class="itShopName">{{item.shopCnName}}</p>
-          <p v-if="isShare" class="shareIcon" @click="share(item.id)"></p>
+          <p v-if="isShare" class="shareIcon" :style="{'background-image':'url('+imgShare+')'}" @click="share(item.id)"></p>
         </div>
       </li>
     </template>
@@ -17,7 +17,8 @@
   </ul>
 </template>
 <script>
-import imgDefault from '@/assets/imgs/img_default.png'
+  import imgDefault from '@/assets/imgs/img_default.png'
+  import imgShare from '@/assets/imgs/icon_share2.png'
   export default {
     props: {
       items: {
@@ -26,16 +27,17 @@ import imgDefault from '@/assets/imgs/img_default.png'
           return []
         }
       },
-      isShare:{
-        type:Boolean,
-        default: function(){
+      isShare: {
+        type: Boolean,
+        default: function () {
           return false
         }
       },
     },
-    data(){
-      return{
-        imgDefault:imgDefault,
+    data() {
+      return {
+        imgDefault: imgDefault,
+        imgShare: imgShare,
       }
     },
     methods: {
@@ -48,9 +50,14 @@ import imgDefault from '@/assets/imgs/img_default.png'
           }
         });
       },
-      share(id){
-        alert(id);
-        event.stopPropagation(); 
+      share(id) {
+        event.stopPropagation();
+        let device = this.whichDevice();
+        if (device == "androidApp") {
+          window.Android.getGoodsId(id);
+        } else if (device == "iosApp") {
+
+        }
       }
     },
     mounted() {
@@ -121,13 +128,15 @@ import imgDefault from '@/assets/imgs/img_default.png'
   }
 
   ul.proList li .shareIcon {
-    background-image: linear-gradient(-77deg, #fb6455 14%, #fe3d36 100%);
     width: .48rem;
     height: .48rem;
     border-radius: 100%;
     position: absolute;
     right: .1rem;
     bottom: 0;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100% 100%;
   }
 
 </style>

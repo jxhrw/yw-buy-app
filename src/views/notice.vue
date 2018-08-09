@@ -1,6 +1,6 @@
 <template>
   <div id="notice">
-    <ywBar :title="title"></ywBar>
+    <ywBar :title="title" :isFinish="true"></ywBar>
     <div class="content" ref="contentRef">
       <mu-paper class="demo-loadmore-wrap" id="demo-loadmore-wrap">
         <mu-container ref="container" class="demo-loadmore-content">
@@ -8,11 +8,10 @@
           <mu-load-more :refreshing="refreshing" :loading="loading" @load="load">
             <ul class="noticeUl">
               <template v-for="(item,index) in notices">
-                <li @click="goDetail(item.id)" :key="index">
-
+                <li @click="goDetail(item.id,index)" :key="index">
                   <template v-if="listData.category=='41'">
                     <div class="flex">
-                      <h6>询价单通知</h6>
+                      <h6>询价单通知<span v-if="item.isRead==0">（未读）</span></h6>
                       <span class="time">{{item.pastDateRelease}}</span>
                     </div>
                     <p>询价信息</p>
@@ -22,7 +21,7 @@
                   </template>
                   <template v-else-if="listData.category=='51'">
                     <div class="flex">
-                      <h6>询价答复单通知</h6>
+                      <h6>询价答复单通知<span v-if="item.isRead==0">（未读）</span></h6>
                       <span class="time">{{item.pastDateRelease}}</span>
                     </div>
                     <p>报价信息</p>
@@ -32,10 +31,10 @@
                   </template>
                   <template v-else>
                     <div class="flex">
-                      <h6>{{item.title}}</h6>
+                      <h6>{{item.title}}<span v-if="item.isRead==0">（未读）</span></h6>
                       <span class="time">{{item.pastDateRelease}}</span>
                     </div>
-                    <p>{{item.briefIntro}}</p>
+                    <div class="p" v-html="item.briefIntro">{{item.briefIntro}}</div>
                     <div class="image" v-if="item.imageUrl" :style="{'background-image':'url('+item.imageUrl+')'}"></div>
                   </template>
                 </li>
@@ -94,11 +93,12 @@
               document.getElementsByClassName("mu-infinite-scroll-text")[0].innerText = "正在加载...";
             }
           });
-        }).catch(error => {
-          console.log(error)
+        }).catch((err)=>{
+          this.toast(`HTTP ${err.response.status}`);
         });
       },
-      goDetail(id) {
+      goDetail(id,index) {
+        this.notices[index].isRead = 1;//已读
         this.$router.push({
           path: '/noticeDetail',
           query: {
@@ -221,7 +221,7 @@
     color: #999999;
   }
 
-  .noticeUl p {
+  .noticeUl p,.noticeUl .p {
     line-height: .38rem;
     font-size: .28rem;
     color: #999999;

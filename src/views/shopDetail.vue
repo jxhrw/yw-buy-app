@@ -1,6 +1,6 @@
 <template>
   <div id="shopDetail">
-    <ywBar type="share"></ywBar>
+    <ywBar type="share" :goodsId="goodsId"></ywBar>
     <footer>
       <div class="shadow"></div>
       <div class="btnBox">
@@ -48,7 +48,7 @@
             <div class="right">{{shopInfo.address}}</div>
           </li>
         </ul>
-        <ywBtn text='查看商家' class="btnShop" @click.native="toShop()"></ywBtn>
+        <!-- <ywBtn text='查看商家' class="btnShop" @click.native="toShop()"></ywBtn> -->
       </div>
       <!-- <div class="baseInfo">
       <h6>基本参数</h6>
@@ -105,6 +105,8 @@
         shopInfo: {}, //商家信息
         // baseInfo: {}, //基本信息
         otherImageUrlList: [], //商品图片
+        goodsId:0,//商品id
+        isApp:true,//是否处于有表app里
       }
     },
     methods: {
@@ -128,7 +130,8 @@
             //   // 'brand':res.data.body.brand,
             // }
           });
-
+        }).catch((err)=>{
+          this.toast(`HTTP ${err.response.status}`);
         });
       },
       //初始化数据
@@ -153,10 +156,14 @@
       }
     },
     mounted() {
-      
+      let device = this.whichDevice();
+      if (device != "androidApp" && device != "iosApp") {
+        this.isApp = false;
+      }
     },
     activated() {
       this.initData();
+      this.goodsId = parseInt(this.$route.query.id);
       let goodsId = this.$route.query.id;
       this.detailInfo({
         'goodsId': goodsId

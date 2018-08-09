@@ -9,7 +9,6 @@ Vue.use(Router);
 
 export default new Router({
   scrollBehavior (to, from, savedPosition) {
-    // return { x: 0, y: 0 }
     console.log(savedPosition)
     if (savedPosition) {
       return savedPosition
@@ -65,6 +64,14 @@ export default new Router({
     {
       path: '/noticeDetail',
       component: resolve => { return require([ '@/views/noticeDetail' ], resolve) },
+      meta: {
+        keepAlive: true,
+        isBack:false,
+      }
+    },
+    {
+      path: '/problem',
+      component: resolve => { return require([ '@/views/problem' ], resolve) },
       meta: {
         keepAlive: true,
         isBack:false,

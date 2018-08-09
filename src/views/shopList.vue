@@ -310,7 +310,6 @@
       },
       //滚动事件
       scrollHandler() {
-        //console.log(this.$refs.container.scrollTop)
         sessionStorage.setItem("shopListScrollTop", this.$refs.container.scrollTop);
         if (this.$refs.container.scrollTop > 300) {
           this.sctop = true;

@@ -1,6 +1,6 @@
 import axios from 'axios';
-const base = '';
-// document.cookie = 'token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InlidGVzdCIsIlVVSUQiOiI1ODcwN2NjNyJ9.WXbBr5VUytZevcfExFDEHWZvuMWHZUympKm5-_YJ2d8';
+const base = '/api';
+// document.cookie = 'token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InlidGVzdCIsIlVVSUQiOiI3NmYxOTRiZSJ9.mOtQeVRRfrkFhBLbu73WzEIGcjpXqZRPWlgs9SVIArk';
 let api = definiens();
 
 function definiens(){
@@ -32,6 +32,13 @@ export const loadGoodsDetail = pams => {
   })
 };
 
+//获取店铺信息
+export const loadShopInfo = pams => {
+  return api.get(`${base}/user-center/myShop/loadShopInfo`, {
+    "params": pams
+  })
+};
+
 //价格区间字典
 export const queryDic = pams => {
   return axios.get(`${base}/goods-warehouse/goodsShow/queryDic`, {
@@ -49,6 +56,13 @@ export const queryAffichePage = pams => {
 //查询公告消息详情
 export const queryAfficheDetail = pams => {
   return api.get(`${base}/message-provider-service/affiche/queryAfficheDetail`, {
+    "params": pams
+  })
+};
+
+//帮助中心列表
+export const helpCenterList = pams => {
+  return api.get(`${base}/user-center/personalcenter/helpCenterList`, {
     "params": pams
   })
 };

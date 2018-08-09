@@ -125,4 +125,10 @@
     margin: 0;
   }
 
+.mint-toast{
+  padding:5px 10px!important;
+}
+.mint-toast-text{
+  font-size: .24rem;
+}
 </style>

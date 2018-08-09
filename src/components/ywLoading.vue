@@ -1,24 +1,31 @@
 <template>
-    <div class="fullScreen" :class="{'show':loading}" :style="{'backgound':bgColor}">
-        <div class="loading"></div>
-    </div>
+  <div class="fullScreen" :class="{'show':loading}" :style="{'backgound':bgColor}">
+    <div class="loading" :style="{'background-image':'url('+iconLoading+')'}"></div>
+  </div>
 </template>
 <script>
-    export default{
-        props:{
-            loading:{
-                type:Boolean,
-                default:false
-            },
-            bgColor:{
-                type:String,
-                default:"none",
-            }
-        }
+  import iconLoading from '@/assets/imgs/loading.gif'
+  export default {
+    props: {
+      loading: {
+        type: Boolean,
+        default: false
+      },
+      bgColor: {
+        type: String,
+        default: "none",
+      }
+    },
+    data() {
+      return {
+        iconLoading: iconLoading,
+      }
     }
+  }
+
 </script>
 <style scoped>
-.fullScreen{
+  .fullScreen {
     position: fixed;
     top: 0;
     left: 0;
@@ -26,11 +33,13 @@
     height: 100%;
     z-index: 9999;
     display: none;
-}
-.fullScreen.show{
+  }
+
+  .fullScreen.show {
     display: block;
-}
-.loading{
+  }
+
+  .loading {
     width: 1rem;
     height: 1rem;
     position: absolute;
@@ -38,7 +47,8 @@
     left: 50%;
     margin-top: -0.5rem;
     margin-left: -.5rem;
-    background-color: rgba(0,0,0,0.5);
-}
-</style>
+    background: rgba(0, 0, 0, 0.5) url() no-repeat center/50% 50%;
+    border-radius: 0.1rem;
+  }
 
+</style>

@@ -6,14 +6,14 @@
   </header>
   <header v-else-if="type=='share'" class="shareHeader">
     <span class="iconShareBtn iconShareBtn1" @click="historyBack()"></span>
-    <span class="iconShareBtn iconShareBtn2" @click="share(goodsId)"></span>
+    <span v-if="shareBtnShow" class="iconShareBtn iconShareBtn2" @click="share(goodsId)"></span>
   </header>
 </template>
 <script>
   // title 只有返回按钮和标题
   // share 只有返回按钮和分享按钮
   // goodsId 商品id
-  // isFinish app为ture-退出webview,其他为false-返回上一页
+  // shareBtnShow 分享按钮是否显示
   export default {
     props: {
       type: {
@@ -24,23 +24,29 @@
         type: String,
         default: ""
       },
-      isFinish: {
-        type: Boolean,
-        default: false
-      },
       goodsId: {
         type: Number,
         default: 0
+      },
+      shareBtnShow:{
+        type: Boolean,
+        default: true
       }
     },
     methods: {
       historyBack() {
-        if (this.isFinish) {
-          let device = this.whichDevice();
+        let device = this.whichDevice();
+        let index = JSON.parse(window.sessionStorage.getItem("pageIndex"));
+        //from是上一页，to是当前页
+        if ((index.to == null && index.from==null) || (index.to == 1 && index.from>index.to)) {
           if (device == "androidApp") {
             window.Android.finish();
           } else if (device == "iosApp") {
-
+            //ActionName：原生中对应的方法名；parameter：回传的参数
+            // window.webkit.messageHandlers.ActionName.postMessage('parameter');
+            window.webkit.messageHandlers.finish.postMessage('');
+          } else {
+            window.history.back();
           }
         } else {
           window.history.back();
@@ -51,7 +57,7 @@
         if (device == "androidApp") {
           window.Android.getGoodsId(id);
         } else if (device == "iosApp") {
-
+          window.webkit.messageHandlers.getGoodsId.postMessage(id);
         }
       }
     }

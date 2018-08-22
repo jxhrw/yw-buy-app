@@ -25,8 +25,8 @@
           this.ajaxResult(res, function () {
             $this.info = res.data.body;
           });
-        }).catch((err)=>{
-          this.toast(`HTTP ${err.response.status}`);
+        }).catch((err) => {
+          this.axiosCatch(err);
         });
       },
       initData() {
@@ -59,7 +59,7 @@
     -webkit-overflow-scrolling: touch;
     padding-top: 1.5rem;
     padding-bottom: .3rem;
-    padding: 1.5rem 0.62rem 0.5rem 0.62rem;
+    padding: 1.2rem 0.62rem 0.5rem 0.62rem;
   }
 
   .content h1 {
@@ -69,6 +69,7 @@
     margin: 0;
     line-height: .4rem;
     font-weight: normal;
+    padding-bottom: .15rem;
   }
 
   .content .txt {
@@ -76,10 +77,13 @@
     font-size: .28rem;
     color: #999999;
     line-height: .38rem;
+    /* text-align: justify; */
   }
 
-  .content .txt img {
-    max-width: 100%;
+</style>
+<style>
+  #noticeDetail img {
+    height: auto !important;
+    max-width: 100% !important;
   }
-
 </style>

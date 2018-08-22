@@ -4,9 +4,9 @@
 
     <scrollToTop :scTop="sctop" @click.native="goMyTop()" :style="{'position':'absolute'}"></scrollToTop>
 
-    <div class="top-bar" id="top-bar" :style="{'position':'absolute'}">
+    <div class="top-bar" :class="{'show':topShow}" id="top-bar" :style="{'position':'absolute'}">
       <div v-if="isApp" style="float:left" class="topBtnLeft" @click="finish()"></div>
-      <div v-if="false" style="float:right" class="topBtnRight" @click="shareUrl(shopInfoTxt)"></div>
+      <div v-if="isApp" style="float:right" class="topBtnRight" @click="shareUrl(shopInfoTxt)"></div>
       <form action="javascript:;" class="searchForm">
         <input id="searchTxt" type="search" @keyup.enter="search()" v-model="searchTxt" :placeholder="placeholder" />
       </form>
@@ -53,7 +53,7 @@
         <mu-container ref="container" class="demo-loadmore-content">
           <!-- @refresh="refresh"  -->
           <mu-load-more :refreshing="refreshing" :loading="loading" @load="load">
-            <Prolist :items='pageItems' @scroll.native="scrollHandler" :isShare="isApp" :isSelf="true"></Prolist>
+            <Prolist :items='pageItems' @scroll.native="scrollHandler" :isShare="isApp" :isSelf="false"></Prolist>
           </mu-load-more>
         </mu-container>
       </mu-paper>
@@ -65,9 +65,9 @@
 
 <script>
   import {
-    queryGoodsPage,
+    queryMyGoodsPageForShare,
     queryDic,
-    loadShopInfo
+    loadShopInfoForShare
   } from '../api/api'
   export default {
     data() {
@@ -104,6 +104,7 @@
         refreshing: false, //下拉loading
         loading: false, //底部loading
         requesting: true, //整体loading
+        topShow:false,//搜索是否有背景图
       }
     },
     components: {},
@@ -115,7 +116,7 @@
         let $bodyThis = this;
         this.isLoading = true;
         // this.requesting = true;
-        queryGoodsPage(data).then(res => {
+        queryMyGoodsPageForShare(data).then(res => {
           let $this = this;
           this.ajaxResult(res, function () {
             $this.isLoading = false;
@@ -157,7 +158,7 @@
       shopInfoFuc() {
         let $bodyThis = this;
         let obj = {"shopId":this.$route.query.shopId};
-        loadShopInfo(obj).then(res => {
+        loadShopInfoForShare(obj).then(res => {
           this.ajaxResult(res, function () {
             $bodyThis.shopInfoTxt = res.data.body;
           })
@@ -236,9 +237,11 @@
         //操控背景图的位置
         if (scrollTop >= shopInfoCH - topBarHeight) {
           document.getElementById("top-bar").style.backgroundPosition = 'center bottom 0px';
+          this.topShow = true;
         } else {
           document.getElementById("top-bar").style.backgroundPosition = 'center bottom ' + (topBarHeight - shopInfoCH +
             scrollTop) + 'px';
+          this.topShow = false;
         }
         //操控absolute筛选按钮是否出现
         this.buttonsShow = (scrollTop >= buttonsUsefulCH - topBarHeight);
@@ -351,6 +354,7 @@
       }
       document.getElementById("top-bar").style.backgroundPosition = 'center bottom ' + (topBarHeight - shopInfoCH +
         scrollTop) + 'px';
+      this.topShow = true;
     },
   }
 
@@ -425,6 +429,8 @@
     top: 0;
     width: 100%;
     z-index: 5;
+  }
+  .top-bar.show {
     background: url("../assets/imgs/bg_shopOnline.png") no-repeat bottom/cover;
   }
 

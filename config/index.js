@@ -29,7 +29,7 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/api': {
-        target: 'http://59.110.18.41:8402',
+        target: 'https://html-test.youwatch.cn',
         // target:'http://59.110.18.41:8402/message-provider-service',
         changeOrigin: true,
         pathRewrite:  {

@@ -1,15 +1,15 @@
 <template>
   <ul class="proList">
     <template v-for="(item,index) in items">
-      <li :key="index" @click="jumpHref(item.id)">
-        <div v-if="item.image=='http://youwatch.oss-cn-beijing.aliyuncs.com/null'" class="imgDiv" :style="{ 'background-image': 'url('+imgDefault+')'}"></div>
+      <li :key="index" @click="jumpHref(item.id,item.detailUrl)">
+        <div v-if="item.image=='https://youwatch.oss-cn-beijing.aliyuncs.com/null'" class="imgDiv" :style="{ 'background-image': 'url('+imgDefault+')'}"></div>
         <div v-else class="imgDiv" :style="{ 'background-image': 'url('+item.image+')'}"></div>
         <div class="infoBox">
           <p class="itName">{{item.name}}</p>
           <p class="itPrice">
-            <span>￥</span>{{item.retailPriceShow}}</p>
+            <span>￥</span>{{item.salePriceShow}}</p>
           <p class="itShopName">{{item.shopCnName}}</p>
-          <p v-if="isShare" class="shareIcon" :style="{'background-image':'url('+imgShare+')'}" @click="share(item.id)"></p>
+          <p v-if="isShare" class="shareIcon" :style="{'background-image':'url('+imgShare+')'}" @click="share(item.goodsId)"></p>
         </div>
       </li>
     </template>
@@ -17,6 +17,8 @@
   </ul>
 </template>
 <script>
+// isShare 是否可分享（是否是app）
+// isSelf 是否是自个商家
   import imgDefault from '@/assets/imgs/img_default.png'
   import imgShare from '@/assets/imgs/icon_share2.png'
   export default {
@@ -33,6 +35,12 @@
           return false
         }
       },
+      isSelf: {
+        type: Boolean,
+        default: function () {
+          return false
+        }
+      },
     },
     data() {
       return {
@@ -41,13 +49,14 @@
       }
     },
     methods: {
-      jumpHref(id) {
+      jumpHref(id,url) {
+        let pathMy = this.isSelf ? '/goodsDetail':'/goodsDetHv';
+        let obj = {'goodsAgentId':id};
+        // let pathUrl = url;
         this.$emit('headCallBack', false);
         this.$router.push({
-          path: '/shopDetail',
-          query: {
-            id: id
-          }
+          path: pathMy,
+          query: obj
         });
       },
       share(id) {
@@ -56,7 +65,7 @@
         if (device == "androidApp") {
           window.Android.getGoodsId(id);
         } else if (device == "iosApp") {
-
+           window.webkit.messageHandlers.getGoodsId.postMessage(id);
         }
       }
     },
@@ -68,7 +77,7 @@
 </script>
 <style scoped>
   ul.proList {
-    width: 7.5rem;
+    width: 100%;
     list-style: none;
     padding: 0;
     display: flex;
@@ -99,7 +108,6 @@
 
   ul.proList li .itName {
     font-size: .24rem;
-    line-height: .24rem;
     color: #333333;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -107,11 +115,10 @@
   }
 
   ul.proList li .itPrice {
-    margin-top: .3rem;
+    margin-top: .24rem;
     font-family: DINAlternate-Bold;
     font-size: .24rem;
     color: #fe3d36;
-    line-height: .24rem;
   }
 
   ul.proList li .itPrice span {

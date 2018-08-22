@@ -1,9 +1,9 @@
 <template>
   <div id="app">
     <transition :name="'vux-pop-' + (direction === 'firstward' ? 'er' :direction)">
-        <keep-alive>
-          <router-view class="router-view"></router-view>
-        </keep-alive>
+      <keep-alive>
+        <router-view class="router-view"></router-view>
+      </keep-alive>
     </transition>
   </div>
 </template>
@@ -54,7 +54,7 @@
     font-size: 50px;
   }
 
-#app>div {
+  #app>div {
     position: relative;
     font-size: .26rem;
     overflow: auto;
@@ -125,10 +125,31 @@
     margin: 0;
   }
 
-.mint-toast{
-  padding:5px 10px!important;
-}
-.mint-toast-text{
-  font-size: .24rem;
-}
+  /* toast样式 */
+  .mint-toast {
+    padding: 5px 10px !important;
+  }
+
+  .mint-toast-text {
+    font-size: .24rem;
+  }
+
+
+  /* 加载更多的样式 */
+  .mu-infinite-scroll {
+    background-color: #fafafa!important;
+    height: .6rem!important;
+    padding: .2rem 0 0.2rem 0!important;
+  }
+
+  .mu-circle-wrapper {
+    width: .24rem !important;
+    height: .24rem !important;
+  }
+
+  .mu-infinite-scroll-text {
+    font-size: .24rem!important;
+    color: #999!important;
+    margin-right:16px!important;
+  }
 </style>

@@ -10,6 +10,9 @@ import actions from './actions'
 import mutations from './mutations'
 
 export default new Vuex.Store({
+  state:{
+    shopId:"",//商店id
+  },
   modules:{
     mutations
   },

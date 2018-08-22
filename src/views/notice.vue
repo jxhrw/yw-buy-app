@@ -1,6 +1,6 @@
 <template>
   <div id="notice">
-    <ywBar :title="title" :isFinish="true"></ywBar>
+    <ywBar :title="title"></ywBar>
     <div class="content" ref="contentRef">
       <mu-paper class="demo-loadmore-wrap" id="demo-loadmore-wrap">
         <mu-container ref="container" class="demo-loadmore-content">
@@ -9,7 +9,7 @@
             <ul class="noticeUl">
               <template v-for="(item,index) in notices">
                 <li @click="goDetail(item.id,index)" :key="index">
-                  <template v-if="listData.category=='41'">
+                  <!-- <template v-if="listData.category=='41'">
                     <div class="flex">
                       <h6>询价单通知<span v-if="item.isRead==0">（未读）</span></h6>
                       <span class="time">{{item.pastDateRelease}}</span>
@@ -28,8 +28,8 @@
                     <p>商品名称：{{item.desc}}</p>
                     <p>商品名称：{{item.desc}}</p>
                     <p>商品名称：{{item.desc}}</p>
-                  </template>
-                  <template v-else>
+                  </template> -->
+                  <template>
                     <div class="flex">
                       <h6>{{item.title}}<span v-if="item.isRead==0">（未读）</span></h6>
                       <span class="time">{{item.pastDateRelease}}</span>
@@ -60,7 +60,7 @@
         listData: {
           category: 1, //公告分类：1-系统消息，2-交易动态，3-活动通知，4-询价，5-报价
           index: 1,
-          pageSize: 100
+          pageSize: 20
         }, //请求
         isLoading: false, //是否正在请求中
         refreshing: false, //下拉loading
@@ -79,7 +79,7 @@
             $this.isLoading = false;
             $this.refreshing = false;
             $this.loading = false;
-            $this.notices = res.data.body.items;
+            $this.notices = $this.notices.concat(res.data.body.items);
             $this.pageInfo = {
               'pageNum': res.data.body.pageNum,
               'pages': res.data.body.pages
@@ -94,7 +94,7 @@
             }
           });
         }).catch((err)=>{
-          this.toast(`HTTP ${err.response.status}`);
+          this.axiosCatch(err);
         });
       },
       goDetail(id,index) {
@@ -116,7 +116,7 @@
       },
       //页面滚动事件
       handleScroll() {
-        let scrollTop = this.$refs.bodyhtml.scrollTop;
+        let scrollTop = this.$refs.contentRef.scrollTop;
         let bodyHeight = document.getElementById("demo-loadmore-wrap")
           .clientHeight;
         let windowHeight = document.getElementById("notice").clientHeight;
@@ -140,7 +140,7 @@
         this.listData = {
           category: 1,
           index: 1,
-          pageSize: 100
+          pageSize: 20
         };
 
         this.listData.category = this.$route.query.id || "1";
@@ -243,20 +243,9 @@
     /* transform:translate3d(0,-1.8rem,0)!important; */
   }
 
-  #notice .mu-infinite-scroll {
-    background-color: #fafafa;
-    height: .6rem;
-    padding: .2rem 0 0.1rem 0;
-  }
-
-  #notice .mu-circle-wrapper {
-    width: .24rem !important;
-    height: .24rem !important;
-  }
-
-  #notice .mu-infinite-scroll-text {
-    font-size: .24rem;
-    color: #999;
+  #notice .p img {
+    height: auto !important;
+    max-width: 100% !important;
   }
 
 </style>

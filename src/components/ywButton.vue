@@ -111,7 +111,7 @@
     width: .2rem;
     height: .52rem;
     background: url('') no-repeat center;
-    background-size: 70% 63%;
+    background-size: 56% 48%;
     margin-left: 0.1rem;
   }
 

@@ -8,7 +8,6 @@ const state = {
   token:'1323',
   selectJson:[],
   selectPage:{},
-
 };
 
 const mutations = {

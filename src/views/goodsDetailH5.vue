@@ -1,28 +1,29 @@
 <template>
-  <div id="shopDetail">
-    <ywBar type="share" :goodsId="goodsId"></ywBar>
+  <div id="goodsDetail">
+    <scrollToTop :scTop="sctop" @click.native="goMyTop()" :style="{'position':'absolute','bottom': '1.5rem','right': '0.5rem'}"></scrollToTop>
+    <ywBar v-if="isApp" type="share" :goodsId="goodsId"></ywBar>
     <footer>
       <div class="shadow"></div>
       <div class="btnBox">
-        <ywBtn text="询价"></ywBtn>
+        <ywBtn id="cBtn" :class="{'no':!canClick}" class="cBtn" text="询价" @click.native="askPrice(goodsId,shopId)"></ywBtn>
       </div>
     </footer>
-    <div class="content">
+    <div class="content" ref="content">
       <div class="banner">
-        <wc-swiper class='swiper' v-if="slides.length" :autoplay='false' :therehold="'10'" :style="{'padding-bottom': slides.length>1?'.78rem':'0'}">
-          <wc-slide v-for="(item, key) in slides" :key="key">
+        <div class='swiperImg' v-if="slides.length==1" :style="{'background-image':'url('+slides[0]+')'}"></div>
+        <swiper class='swiper' v-if="slides.length>1" :options="swiperOption">
+          <swiper-slide v-for="(item, key) in slides" :key="key">
             <div class='swiperImg' :style="{'background-image':'url('+item+')'}"></div>
-          </wc-slide>
-        </wc-swiper>
+          </swiper-slide>
+          <!-- Optional controls -->
+          <div class="swiper-pagination" slot="pagination"></div>
+        </swiper>
       </div>
       <div class="proInfo">
         <p class="proPrice">
           <span>￥</span>{{proPrice}}</p>
         <p class="proName">{{proName}}</p>
       </div>
-      <!-- <div class="newOldLevel">
-      <h6>新旧程度</h6>
-    </div> -->
       <div class="proAttr">
         <h6>商品属性</h6>
         <ul>
@@ -87,40 +88,61 @@
           </template>
         </div>
       </div>
+      <div class="scrImg">
+        <div class="img" style="background-image:url('https://youwatch.oss-cn-beijing.aliyuncs.com/app/1.png');height:3.8rem;"></div>
+        <div class="img" style="background-image:url('https://youwatch.oss-cn-beijing.aliyuncs.com/app/2.png');height:3.2rem;"></div>
+        <div class="img" style="background-image:url('https://youwatch.oss-cn-beijing.aliyuncs.com/app/3.png');height:12.86rem;"></div>
+        <!-- <img class="img" src="https://youwatch.oss-cn-beijing.aliyuncs.com/app/3.png" alt=""> -->
+      </div>
     </div>
   </div>
 </template>
 
 <script>
   import {
-    loadGoodsDetail
+    loadMyGoodsDetailForShare,
+    askPriceApp
   } from '../api/api'
   export default {
     data() {
       return {
+        sctop: false, //滚动到顶部的按钮是否出现
         slides: [], //轮播的banner图
         proName: '', //商品名称
-        proPrice: '', //商品价格
+        proPrice: '', //商品价格,sall代理价，shopPurchase平台采购价，retail零售价
         productAttributeList: [], //商品属性
         shopInfo: {}, //商家信息
         // baseInfo: {}, //基本信息
         otherImageUrlList: [], //商品图片
-        goodsId:0,//商品id
-        isApp:true,//是否处于有表app里
+        goodsId: 0, //商品id
+        shopId: 0, //商家id
+        isApp: true, //是否处于有表app里
+        canClick: true, //询价按钮是否可点击
+        swiperOption: {
+          loop: true,
+          pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+            clickableClass: 'my-pagination-clickable',
+          },
+        }
       }
     },
     methods: {
       detailInfo(data) {
-        loadGoodsDetail(data).then(res => {
+        loadMyGoodsDetailForShare(data).then(res => {
           let $this = this;
           this.ajaxResult(res, function () {
-            $this.slides = res.data.body.imgUrlList;
+            $this.shopId = res.data.body.shopId;
+            $this.slides = res.data.body.imgUrlList.length > 0 ? res.data.body.imgUrlList : [
+              'https://youwatch.oss-cn-beijing.aliyuncs.com/app/img_default.png'
+            ];
             $this.proName = res.data.body.name;
-            $this.proPrice = res.data.body.salePriceShow;
-            //this.newOldLevel = res.data.body.newOldLevel;
+            $this.proPrice = res.data.body.retailPrice || res.data.body.salePrice;
             $this.productAttributeList = res.data.body.productAttributeList;
             $this.shopInfo = res.data.body.shopInfo;
             $this.otherImageUrlList = res.data.body.otherImageUrlList;
+            $this.goodsId = res.data.body.id;
             // this.baseInfo = {
             //   'brand': res.data.body.brandShow,
             //   'series': res.data.body.seriesShow,
@@ -130,8 +152,8 @@
             //   // 'brand':res.data.body.brand,
             // }
           });
-        }).catch((err)=>{
-          this.toast(`HTTP ${err.response.status}`);
+        }).catch((err) => {
+          this.axiosCatch(err);
         });
       },
       //初始化数据
@@ -139,11 +161,30 @@
         this.slides = [];
         this.proName = '';
         this.proPrice = '';
-        // this.newOldLevel = [];
         this.productAttributeList = [];
         this.shopInfo = {};
         // this.baseInfo = {};
         this.otherImageUrlList = [];
+        this.sctop = false;
+      },
+      //询价
+      askPrice(goodsId, shopId) {
+        this.canClick = false;
+        askPriceApp({
+          "targetShopId": shopId,
+          "goodsId": goodsId
+        }).then(res => {
+          let $this = this;
+          this.canClick = true;
+          this.$alert({
+            title: '', // 默认无标题
+            content: res.data.message,
+            btnText: '',
+          })
+        }).catch((err) => {
+          this.canClick = true;
+          this.axiosCatch(err, "load");
+        });
       },
       //查看商家
       toShop() {
@@ -153,6 +194,18 @@
 
         //   }
         // });
+      },
+      goMyTop() {
+        this.goTop(this.$refs.content, 0);
+      },
+      //页面滚动事件
+      handleScroll() {
+        let scrollTop = this.$refs.content.scrollTop;
+        if (scrollTop > 300) {
+          this.sctop = true;
+        } else {
+          this.sctop = false;
+        }
       }
     },
     mounted() {
@@ -160,23 +213,37 @@
       if (device != "androidApp" && device != "iosApp") {
         this.isApp = false;
       }
+      this.$refs.content.addEventListener('scroll', this.handleScroll);
     },
     activated() {
       this.initData();
-      this.goodsId = parseInt(this.$route.query.id);
-      let goodsId = this.$route.query.id;
-      this.detailInfo({
-        'goodsId': goodsId
-      });
+      let agentId = this.$route.query.goodsAgentId;
+      let goodsId = this.$route.query.goodsId;
+      let obj = {};
+      if (agentId) {
+        obj = {
+          'agentId': agentId
+        }
+      } else if (goodsId) {
+        obj = {
+          'goodsId': goodsId
+        }
+      }
+      this.detailInfo(obj);
     },
   };
 
 </script>
 
 <style scoped>
-  #shopDetail {
+  #goodsDetail {
     background: #fff;
     height: 100%;
+  }
+
+  .cBtn.no {
+    pointer-events: none;
+    opacity: 0.2;
   }
 
   .content {
@@ -196,10 +263,11 @@
   .swiper {
     height: 5.88rem;
     box-sizing: initial;
+    padding-bottom: 0.78rem;
   }
 
   .swiperImg {
-    height: 100%;
+    height: 5.88rem;
     background-color: #fff;
     background-repeat: no-repeat;
     background-position: center;
@@ -212,8 +280,6 @@
   }
 
   .proInfo,
-  /* .newOldLevel, */
-
   .proAttr,
   .shopInfo {
     width: 6.9rem;
@@ -254,13 +320,13 @@
 
   .proPrice {
     font-family: DINAlternate-Bold;
-    font-size: .24rem;
+    font-size: .36rem;
     color: #fe3d36;
     line-height: .24rem;
   }
 
   .proPrice span {
-    font-size: .2rem;
+    font-size: .24rem;
   }
 
   .proName {
@@ -311,10 +377,22 @@
 
   }
 
+  .scrImg {
+    padding: 0 0.3rem;
+  }
+
+  .scrImg .img {
+    width: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+  }
+
   footer {
     position: absolute;
     width: 100%;
     bottom: 0;
+    z-index: 15;
   }
 
   footer .shadow {
@@ -345,27 +423,19 @@
 <style>
   /* 主要用来修改组件css */
 
-  #shopDetail .wc-slide {
-    
-  }
-
-  #shopDetail .wc-pagination {
-    height: auto;
-    bottom: .3rem;
-  }
-
-  #shopDetail .wc-pagination .wc-dot {
-    opacity: 0.2;
+  #goodsDetail .swiper-pagination-bullet-active {
     background: #000000;
-    width: 6px;
-    height: 6px;
+    width: 15px;
     border-radius: 10px;
   }
 
-  #shopDetail .wc-pagination .wc-dot-active {
-    background: #000000;
-    width: 15px;
-    opacity: 1;
+  #goodsDetail .swiper-pagination-bullet,
+  #goodsDetail .swiper-pagination-bullet:focus,
+  #goodsDetail .swiper-pagination-bullet:hover,
+  #goodsDetail .swiper-pagination-bullet:active,
+  #goodsDetail .swiper-pagination-bullet:visited,
+  #goodsDetail .swiper-pagination-bullet:link {
+    outline: none;
   }
 
 </style>

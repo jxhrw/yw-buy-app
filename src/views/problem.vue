@@ -1,15 +1,15 @@
 <template>
   <div id="problem">
-    <ywBar :title="'帮助中心'" :isFinish="true"></ywBar>
+    <ywBar :title="'帮助中心'"></ywBar>
     <div class="content">
       <ul class="problemUl">
-        <li v-for="(item,index) in proList" :key="index">
+        <li v-for="(item,index) in proList" :key="index" @click="dropDown(index)">
           <h6>{{item.title}}</h6>
           <div class="box">
             <div class="explain" v-html='item.content'>{{item.content}}</div>
           </div>
           <div style="padding:0.1rem 0;">
-            <div class="arrowBx" :style="{'height':isDrop[index]?'auto':'0'}" @click="dropDown(index)">
+            <div class="arrowBx" :style="{'height':isDrop[index]?'auto':'0'}">
               <mu-icon class="arrow" value="expand_more"></mu-icon>
             </div>
           </div>
@@ -19,7 +19,7 @@
     <footer>
       <div class="gradient"></div>
       <div class="footer">
-        <a class="footBtn" href="tel://15990319244">联系客服</a>
+        <a class="footBtn" @click="goTel(4000116008)">联系客服</a>
         <a class="footBtn" style="background-image:linear-gradient(-49deg, #fb6455 0%, #fe3d36 100%);color:#fff;margin-left:.5rem;" @click="popupShow=true">添加微信</a>
       </div>
     </footer>
@@ -70,7 +70,7 @@
             }
           }
         }).catch((err)=>{
-          this.toast(`HTTP ${err.response.status}`);
+          this.axiosCatch(err);
         });
       },
       initData() {
@@ -194,6 +194,7 @@
     justify-content: center;
     align-items: center;
     height: 1.2rem;
+    background: #fff;
   }
 
   .footBtn {

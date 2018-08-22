@@ -18,11 +18,18 @@ Vue.use(publicJs);
 import MuseUI from 'muse-ui';
 import 'muse-ui/dist/muse-ui.css';
 Vue.use(MuseUI);
+//提示框
+import {Alert} from 'wc-messagebox'
+import 'wc-messagebox/style.css'
+Vue.use(Alert)
+// Vue.use(Confirm, options)
+// Vue.use(Toast, options)
 
 //轮播图的插件（muse-ui的轮播图效果不好）
-import wcSwiper from 'wc-swiper'
-import 'wc-swiper/style.css'
-Vue.use(wcSwiper);
+import 'swiper/dist/css/swiper.css'
+import { swiper, swiperSlide } from 'vue-awesome-swiper'
+Vue.component('swiper', swiper);
+Vue.component('swiperSlide', swiperSlide);
 
 //toast引入组件
 // import { Toast } from 'mint-ui';
@@ -47,6 +54,8 @@ let historyCount = history.getItem('count') * 1;
 router.beforeEach(function (to, from, next) {
   const toIndex = history.getItem(to.path);
   const fromIndex = history.getItem(from.path);
+  let index={'from':fromIndex,'to':toIndex};
+  history.setItem('pageIndex',JSON.stringify(index));
 
   if(!fromIndex || parseInt(fromIndex, 10)<1){
     store.commit('UPDATE_DIRECTION', {direction: 'firstward'});

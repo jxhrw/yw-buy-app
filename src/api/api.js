@@ -1,26 +1,55 @@
 import axios from 'axios';
-const base = '/api';
-// document.cookie = 'token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InlidGVzdCIsIlVVSUQiOiI3NmYxOTRiZSJ9.mOtQeVRRfrkFhBLbu73WzEIGcjpXqZRPWlgs9SVIArk';
-let api = definiens();
-
-function definiens(){
+import Qs from 'qs';
+const base = '';
+const definiensType = function () {
   return axios.create({
     headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'token': getCookie("token"),
+      'app_type':'html',
     }
   });
 }
-function getCookie(name) {
+const definiens = function () {
+  return axios.create({
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'app_type':'html',
+      'token': getCookie("token") || '',
+    }
+  });
+}
+const definiensJson = function () {
+  return axios.create({
+    transformRequest: [function (data) {
+      data = Qs.stringify(data);
+      return data;
+    }],
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'app_type':'html',
+      'token': getCookie("token") || '',
+    }
+  });
+}
+const getCookie = function (name) {
   let arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
   if (arr = document.cookie.match(reg)) {
     return unescape(arr[2]);
   }
 }
+let axiosType = definiensType();
+let api = definiens();
+let apiJson = definiensJson();
 
 //我的商品列表
 export const queryGoodsPage = pams => {
   return api.get(`${base}/goods-warehouse/goodsShow/queryMyGoodsPage`, {
+    "params": pams
+  });
+};
+
+//分享后我的商品列表
+export const queryMyGoodsPageForShare = pams => {
+  return axiosType.get(`${base}/goods-warehouse/goodsShow/queryMyGoodsPageForShare`, {
     "params": pams
   });
 };
@@ -32,6 +61,20 @@ export const loadGoodsDetail = pams => {
   })
 };
 
+//我的商品详情
+export const loadMyGoodsDetail = pams => {
+  return api.get(`${base}/goods-warehouse/goodsShow/loadMyGoodsDetail`, {
+    "params": pams
+  })
+};
+
+//h5商品详情
+export const loadMyGoodsDetailForShare = pams => {
+  return axiosType.get(`${base}/goods-warehouse/goodsShow/loadMyGoodsDetailForShare`, {
+    "params": pams
+  })
+};
+
 //获取店铺信息
 export const loadShopInfo = pams => {
   return api.get(`${base}/user-center/myShop/loadShopInfo`, {
@@ -39,9 +82,16 @@ export const loadShopInfo = pams => {
   })
 };
 
+//没有token的店铺信息
+export const loadShopInfoForShare = pams => {
+  return axiosType.get(`${base}/user-center/myShop/loadShopInfoForShare`, {
+    "params": pams
+  })
+};
+
 //价格区间字典
 export const queryDic = pams => {
-  return axios.get(`${base}/goods-warehouse/goodsShow/queryDic`, {
+  return axiosType.get(`${base}/goods-warehouse/goodsShow/queryDic`, {
     "params": pams
   })
 };
@@ -62,7 +112,12 @@ export const queryAfficheDetail = pams => {
 
 //帮助中心列表
 export const helpCenterList = pams => {
-  return api.get(`${base}/user-center/personalcenter/helpCenterList`, {
+  return axiosType.get(`${base}/user-center/personalcenter/helpCenterList`, {
     "params": pams
   })
+};
+
+//询价
+export const askPriceApp = pams => {
+  return apiJson.post(`${base}/user-center/askprice/askPriceApp`,pams)
 };

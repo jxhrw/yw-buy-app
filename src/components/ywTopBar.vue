@@ -66,8 +66,6 @@
         let device = this.whichDevice();
         let index = JSON.parse(window.sessionStorage.getItem("pageIndex"));
         //from是上一页，to是当前页
-        debugger
-        console.log(index.from,index.to);
         if ((index.to == null && index.from == null) || (index.to == 1 && index.from > index.to) || this.finishView) {
           if (device == "androidApp") {
             window.Android.finish();

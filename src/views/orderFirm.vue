@@ -143,32 +143,23 @@
           'transportFee': 0
         };
         this.canClick = false;
-
-this.$router.replace({
+        submitOrder(obj).then(res => {
+          let $this = this;
+          let isBreak = this.$route.query.isBreak;
+          this.canClick = true;
+          this.ajaxResult(res, function () {
+            $this.$router.replace({
               path: '/payChannel',
               query: {
-                'orderId': '18083014262900001',
-      
+                'orderId': res.data.body,
+                'isBreak': isBreak
               }
             });
-
-        // submitOrder(obj).then(res => {
-        //   let $this = this;
-        //   let isBreak = this.$route.query.isBreak;
-        //   this.canClick = true;
-        //   this.ajaxResult(res, function () {
-        //     $this.$router.replace({
-        //       path: '/payChannel',
-        //       query: {
-        //         'orderId': res.data.body,
-        //         'isBreak': isBreak
-        //       }
-        //     });
-        //   });
-        // }).catch((err) => {
-        //   this.canClick = true;
-        //   this.axiosCatch(err, "on");
-        // });
+          });
+        }).catch((err) => {
+          this.canClick = true;
+          this.axiosCatch(err, "on");
+        });
       },
       //去重选地址
       toChangeAddress() {

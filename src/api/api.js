@@ -1,19 +1,19 @@
 import axios from 'axios';
 import Qs from 'qs';
-const base = '';
-const definiensType = function () {
-  return axios.create({
-    headers: {
-      'app_type':'html',
-    }
-  });
-}
+const base = '/api';
 const definiens = function () {
   return axios.create({
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
       'app_type':'html',
       'token': getCookie("token") || '',
+    }
+  });
+}
+const definiensType = function () {
+  return axios.create({
+    headers: {
+      'app_type':'html',
     }
   });
 }
@@ -36,9 +36,9 @@ const getCookie = function (name) {
     return unescape(arr[2]);
   }
 }
-let axiosType = definiensType();
-let api = definiens();
-let apiJson = definiensJson();
+let api = definiens();//需要token
+let axiosType = definiensType();//不需要token
+let apiJson = definiensJson();//json格式,需要token
 
 //我的商品列表
 export const queryGoodsPage = pams => {
@@ -89,7 +89,7 @@ export const loadShopInfoForShare = pams => {
   })
 };
 
-//价格区间字典
+//字典查询
 export const queryDic = pams => {
   return axiosType.get(`${base}/goods-warehouse/goodsShow/queryDic`, {
     "params": pams
@@ -120,4 +120,46 @@ export const helpCenterList = pams => {
 //询价
 export const askPriceApp = pams => {
   return apiJson.post(`${base}/user-center/askprice/askPriceApp`,pams)
+};
+
+export const loadRootLevel = pams => {
+  return axiosType.get(`${base}/dicAction/loadRootLevel.json`, {
+    "params": pams
+  })
+};
+
+export const loadNextLevel = pams => {
+  return axiosType.get(`${base}/dicAction/loadNextLevel.json`, {
+    "params": pams
+  })
+};
+
+
+//查询收货地址列表
+export const listReceiverAddress = pams => {
+  return api.get(`${base}/fund-account/deal/listReceiverAddress`, {
+    "params": pams
+  })
+};
+
+//查询单个收货地址
+export const loadReceiverAddress = pams => {
+  return api.get(`${base}/fund-account/deal/loadReceiverAddress`, {
+    "params": pams
+  })
+};
+
+//新增收货地址
+export const addReceiverAddress = pams => {
+  return apiJson.post(`${base}/fund-account/deal/addReceiverAddress`, pams)
+};
+
+//修改收货地址
+export const editReceiverAddress = pams => {
+  return apiJson.put(`${base}/fund-account/deal/editReceiverAddress`, pams)
+};
+
+//提交订单
+export const submitOrder = pams => {
+  return apiJson.post(`${base}/fund-account/deal/submitOrder`, pams)
 };

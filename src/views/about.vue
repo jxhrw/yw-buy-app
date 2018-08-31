@@ -1,6 +1,6 @@
 <template>
   <div id="about">
-    <ywBar :title="'关于我们'" style="border-bottom:1px solid #e6e6e6;background: #fff;"></ywBar>
+    <ywBar :title="'关于我们'" style="border-bottom:1px solid #f5f6f6;background: #fff;"></ywBar>
     <div class="content">
       <div class="flex">
         <div class="icon"></div>
@@ -59,7 +59,7 @@
   }
 
   .flex .icon {
-    background: #f5f6f6;
+    background: url('https://youwatch.oss-cn-beijing.aliyuncs.com/app/logo_about.png') no-repeat center/100% 100%;
     width: 1.50rem;
     height: 1.50rem;
     margin: 0.6rem auto 0.23rem auto;
@@ -77,11 +77,11 @@
     margin-top: .55rem;
     list-style: none;
     padding: 0;
-    border-top: 1px solid #e6e6e6;
+    border-top: 1px solid #f5f6f6;
   }
 
   .list li {
-    border-bottom: 1px solid #e6e6e6;
+    border-bottom: 1px solid #f5f6f6;
     display: flex;
     justify-content: space-between;
     align-items: center;

@@ -19,10 +19,11 @@ import MuseUI from 'muse-ui';
 import 'muse-ui/dist/muse-ui.css';
 Vue.use(MuseUI);
 //提示框
-import {Alert} from 'wc-messagebox'
+import {Alert,Confirm} from 'wc-messagebox'
 import 'wc-messagebox/style.css'
-Vue.use(Alert)
-// Vue.use(Confirm, options)
+Vue.use(Alert);
+Vue.use(Confirm);
+// Vue.use(Prompt, options)
 // Vue.use(Toast, options)
 
 //轮播图的插件（muse-ui的轮播图效果不好）

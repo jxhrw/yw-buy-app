@@ -12,7 +12,7 @@ export default (Vue) => {
     if (data.data.status == "200") {
       successFuc(data.data);
     } else {
-      this.errorTips(data.data.status);
+      this.errorTips(data.data.status,data.data.message);
       if (failFuc) {
         failFuc(data.data);
       }
@@ -112,11 +112,17 @@ export default (Vue) => {
   }
 
   //错误提示
-  Vue.prototype.errorTips = function(status){
+  Vue.prototype.errorTips = function(status,message){
     if(status == "401"){
       this.toast(`登录超时`);
     }else if(status == "500"){
       this.toast(`服务器错误`);
+    }else if(status == "fund_error_001"){
+      this.toast('该商品库存不足');
+    }else if(!status && message){
+      this.toast(`${message}`);
+    }else if(message && message.length < 10){
+      this.toast(`${message}`);
     }else{
       this.toast(`HTTP ${status}`);
     }

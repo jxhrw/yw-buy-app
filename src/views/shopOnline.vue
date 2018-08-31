@@ -6,7 +6,7 @@
 
     <div class="top-bar" id="top-bar" :style="{'position':'absolute'}">
       <div v-if="isApp" style="float:left" class="topBtnLeft" @click="finish()"></div>
-      <div v-if="false" style="float:right" class="topBtnRight" @click="shareUrl(shopInfoTxt)"></div>
+      <div v-if="isApp" style="float:right" class="topBtnRight" @click="shareUrl(shopInfoTxt)"></div>
       <form action="javascript:;" class="searchForm">
         <input id="searchTxt" type="search" @keyup.enter="search()" v-model="searchTxt" :placeholder="placeholder" />
       </form>
@@ -84,6 +84,7 @@
         searchTxt: '', //搜索条件的文本
         pageItems: [], //分页内容
         isApp: true, //是否处于有表app里
+        isAppIos:false,//是否iOS app
         btnActive: {
           'price': {
             'chosen': false,
@@ -301,6 +302,9 @@
       this.shopInfoFuc(); //获取店铺信息
       if (device != "androidApp" && device != "iosApp") {
         this.isApp = false;
+      }
+      if(device == "iosApp"){
+        this.isAppIos = true;
       }
     },
     activated() {

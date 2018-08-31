@@ -152,4 +152,61 @@
     color: #999!important;
     margin-right:16px!important;
   }
+
+  /* alert,confirm弹窗的样式 */
+  .wc-popup {
+    border-radius: 4px !important;
+  }
+
+  .wc-popup-inner {
+    border-radius: 4px 4px 0 0 !important;
+    padding: 0.4rem 0.48rem 0.4rem 0.48rem !important;
+  }
+
+  .wc-popup-button {
+    border-radius: 0 0 4px 4px !important;
+  }
+
+  .wc-popup-button:first-child {
+    border-radius: 0 0 0 4px !important;
+  }
+
+  .wc-popup-button:last-child {
+    border-radius: 0 0 4px 0 !important;
+  }
+
+  .wc-popup-inner:after,
+  .wc-popup-button:after {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+
+  .wc-popup-button {
+    font-size: .32rem !important;
+    font-weight: 500 !important;
+    color: #999 !important;
+  }
+
+  .wc-popup-button:last-child {
+    color: #fff !important;
+    background: linear-gradient(60deg, rgba(251, 100, 85, 1) 0%, rgba(254, 61, 54, 1) 100%) !important;
+  }
+
+  .wc-popup-title {
+    font-size: .34rem !important;
+    line-height: .36rem !important;
+    font-weight: 500 !important;
+    color: #000;
+    text-align: left !important;
+    margin-bottom: .25rem !important;
+  }
+
+  .wc-popup-text {
+    font-size: .28rem !important;
+    color: #999 !important;
+    line-height: .4rem !important;
+    text-align: left !important;
+
+  }
 </style>

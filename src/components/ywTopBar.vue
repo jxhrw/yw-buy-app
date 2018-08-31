@@ -8,12 +8,22 @@
     <span class="iconShareBtn iconShareBtn1" @click="historyBack()"></span>
     <span v-if="shareBtnShow" class="iconShareBtn iconShareBtn2" @click="share(goodsId)"></span>
   </header>
+  <header v-else-if="type=='white'" class="whiteHeader">
+    <mu-icon value="chevron_left" right class="iconBtn" @click="historyBack()"></mu-icon>
+    <h1>{{title}}</h1>
+    <span v-if="operateTxt==''" class="resetBtn"></span>
+    <span v-show="operateTxt!=''" :class="{'no':!isClick}" class="resetBtn" @click="operateFuc">{{operateTxt}}</span>
+  </header>
 </template>
 <script>
   // title 只有返回按钮和标题
   // share 只有返回按钮和分享按钮
   // goodsId 商品id
   // shareBtnShow 分享按钮是否显示
+  //operateTxt bar右上角的文字
+  //operateFuc bar右上角的执行方法
+  //isClick bar右上角是否可点
+  //finishView 返回键是否要关闭webview
   export default {
     props: {
       type: {
@@ -28,17 +38,37 @@
         type: Number,
         default: 0
       },
-      shareBtnShow:{
+      shareBtnShow: {
         type: Boolean,
         default: true
-      }
+      },
+      operateTxt: {
+        type: String,
+        default: ''
+      },
+      operateFuc: {
+        type: Function,
+        default: function () {
+          return function () {}
+        }
+      },
+      isClick: {
+        type: Boolean,
+        default: true
+      },
+      finishView: {
+        type: Boolean,
+        default: false
+      },
     },
     methods: {
       historyBack() {
         let device = this.whichDevice();
         let index = JSON.parse(window.sessionStorage.getItem("pageIndex"));
         //from是上一页，to是当前页
-        if ((index.to == null && index.from==null) || (index.to == 1 && index.from>index.to)) {
+        debugger
+        console.log(index.from,index.to);
+        if ((index.to == null && index.from == null) || (index.to == 1 && index.from > index.to) || this.finishView) {
           if (device == "androidApp") {
             window.Android.finish();
           } else if (device == "iosApp") {
@@ -106,8 +136,23 @@
     font-weight: normal;
   }
 
+  header .resetBtn {
+    font-size: .28rem;
+    color: #000;
+  }
+
+  header .resetBtn.no {
+    pointer-events: none;
+    opacity: 0.2;
+  }
+
   .shareHeader {
     background: none;
+  }
+
+  .whiteHeader {
+    border-bottom: 1px solid #f5f6f6;
+    background: #fff;
   }
 
   .iconShareBtn {

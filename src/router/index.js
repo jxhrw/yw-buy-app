@@ -31,7 +31,7 @@ export default new Router({
       }
     },
     {
-      // 商品详情，适用其他商家，不需要token（由shopHv进）
+      // 商品详情，适用其他商家，不需要token（由shopHv进）(逻辑goodsDetailH5和goodsDetail2一致)
       path: '/goodsDetHv',
       component: resolve => { return require([ '@/views/goodsDetailH5' ], resolve) },
       meta: {
@@ -40,7 +40,7 @@ export default new Router({
       }
     },
     {
-      // 商品详情，适用有表市集，需要token（由app进）,唯一区别：返回直接关闭webview
+      // 商品详情，适用有表市集，需要token（由app进）,唯一区别：返回直接关闭webview，(逻辑goodsDetailH5和goodsDetail2一致)
       path: '/goodsDetail2',
       component: resolve => { return require([ '@/views/goodsDetail2' ], resolve) },
       meta: {
@@ -106,6 +106,42 @@ export default new Router({
     {
       path: '/policy',
       component: resolve => { return require([ '@/views/about_policy' ], resolve) },
+      meta: {
+        keepAlive: true,
+        isBack:false,
+      }
+    },
+    //确认订单
+    {
+      path: '/orderFirm',
+      component: resolve => { return require([ '@/views/orderFirm' ], resolve) },
+      meta: {
+        keepAlive: true,
+        isBack:false,
+      }
+    },
+    //选择支付方式
+    {
+      path: '/payChannel',
+      component: resolve => { return require([ '@/views/payChannel' ], resolve) },
+      meta: {
+        keepAlive: true,
+        isBack:false,
+      }
+    },
+    //选择收货地址
+    {
+      path: '/address',
+      component: resolve => { return require([ '@/views/address' ], resolve) },
+      meta: {
+        keepAlive: true,
+        isBack:false,
+      }
+    },
+    //编辑收货地址
+    {
+      path: '/arsChange',
+      component: resolve => { return require([ '@/views/address_change' ], resolve) },
       meta: {
         keepAlive: true,
         isBack:false,

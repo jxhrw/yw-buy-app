@@ -19,6 +19,15 @@
         <p class="proName">{{proName}}</p>
       </div>
       <div class="proAttr">
+        <h6>新旧程度</h6>
+        <ul>
+          <li>
+            <div class="left">商品成色</div>
+            <div class="right">{{newOldLevel.name}}</div>
+          </li>
+        </ul>
+      </div>
+      <div class="proAttr">
         <h6>商品属性</h6>
         <ul>
           <li v-for='(item,index) in productAttributeList' :key="index">
@@ -32,15 +41,15 @@
         <ul>
           <li>
             <div class="left">供货商</div>
-            <div class="right">{{shopInfo.cnName}}</div>
+            <div class="right">{{shopInfo && shopInfo.cnName ? shopInfo.cnName :''}}</div>
           </li>
           <li>
             <div class="left">联系电话</div>
-            <div class="right">{{shopInfo.linkPhone}}</div>
+            <div class="right">{{shopInfo && shopInfo.linkPhone ? shopInfo.linkPhone :''}}</div>
           </li>
           <li>
             <div class="left">联系地址</div>
-            <div class="right">{{shopInfo.address}}</div>
+            <div class="right">{{shopInfo && shopInfo.address ? shopInfo.address :''}}</div>
           </li>
         </ul>
         <!-- <ywBtn text='查看商家' class="btnShop" @click.native="toShop()"></ywBtn> -->
@@ -77,6 +86,7 @@
       <div class="proImg">
         <h6 style="padding-left:.3rem;padding-right:.3rem;">商品详情</h6>
         <div>
+          <div class="productClass" v-if="productDesc" v-html="productDesc">{{productDesc}}</div>
           <template v-for='(item,index) in otherImageUrlList'>
             <img :src="item" alt="" :key="index">
           </template>
@@ -111,6 +121,8 @@
         goodsId: 0, //商品id
         shopId: 0, //商家id
         isApp: true, //是否处于有表app里
+        productDesc: '', //商品描述
+        newOldLevel:{},//新旧程度
         swiperOption: {
           loop: true,
           pagination: {
@@ -127,13 +139,17 @@
           let $this = this;
           this.ajaxResult(res, function () {
             $this.shopId = res.data.body.shopId;
-            $this.slides = res.data.body.imgUrlList.length>0?res.data.body.imgUrlList:['https://youwatch.oss-cn-beijing.aliyuncs.com/app/img_default.png'];
+            $this.slides = res.data.body.imgUrlList.length > 0 ? res.data.body.imgUrlList : [
+              'https://youwatch.oss-cn-beijing.aliyuncs.com/app/img_default.png'
+            ];
             $this.proName = res.data.body.name;
             $this.proPrice = res.data.body.salePrice;
             $this.productAttributeList = res.data.body.productAttributeList;
             $this.shopInfo = res.data.body.shopInfo;
             $this.otherImageUrlList = res.data.body.otherImageUrlList;
             $this.goodsId = res.data.body.id;
+            $this.productDesc = res.data.body.productDesc;
+            $this.newOldLevel = res.data.body.newOldLevel;
             // this.baseInfo = {
             //   'brand': res.data.body.brandShow,
             //   'series': res.data.body.seriesShow,
@@ -144,7 +160,7 @@
             // }
           });
         }).catch((err) => {
-          this.axiosCatch(err,"on");
+          this.axiosCatch(err, "on");
         });
       },
       //初始化数据
@@ -167,8 +183,8 @@
           let $this = this;
           this.$alert({
             title: '', // 默认无标题
-            content:res.data.message,
-            btnText:'',
+            content: res.data.message,
+            btnText: '',
           })
         }).catch((err) => {
           this.axiosCatch(err, "load");
@@ -229,19 +245,18 @@
   }
 
   .banner {
-    min-height: 5.88rem;
     width: 100%;
     margin: auto;
+    min-height: 7.5rem;
   }
 
   .swiper {
-    height: 5.88rem;
+    height: 7.5rem;
     box-sizing: initial;
-    padding-bottom: 0.78rem;
   }
 
   .swiperImg {
-    height: 5.88rem;
+    height: 7.5rem;
     background-color: #fff;
     background-repeat: no-repeat;
     background-position: center;
@@ -319,7 +334,7 @@
   .proImg img {
     width: 100%;
     display: block;
-    margin-top: .25rem;
+    margin-top: .2rem;
   }
 
   .btnShop {
@@ -391,15 +406,45 @@
     color: #fff;
   }
 
+  .productClass {
+    padding: 0.1rem 0.3rem 0 0.3rem;
+  }
+
 </style>
 
 
 <style>
   /* 主要用来修改组件css */
 
+  #goodsDetail .productClass span {
+    font-size: 0.26rem !important;
+  }
+
+  #goodsDetail .productClass img {
+    width: 7.5rem!important;
+    height: auto !important;
+    margin-top: 0.1rem;
+    margin-bottom: 0.1rem;
+    margin-left:-0.3rem;
+  }
+
+  #goodsDetail .productClass table {
+    width: 100% !important;
+  }
+
+  #goodsDetail .swiper-pagination-bullet {
+    width: 4px;
+    height: 4px;
+    border-radius: 4px;
+  }
+
+  #goodsDetail .swiper-container-horizontal>.swiper-pagination-bullets .swiper-pagination-bullet {
+    margin: 0 2px;
+  }
+
   #goodsDetail .swiper-pagination-bullet-active {
     background: #000000;
-    width: 15px;
+    width: 10px;
     border-radius: 10px;
   }
 

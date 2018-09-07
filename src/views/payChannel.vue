@@ -1,6 +1,6 @@
 <template>
   <div id="payChannel">
-    <ywBar :title="'选择付款方式'" type="white" :finishView="finish"></ywBar>
+    <ywBar :title="'选择付款方式'" type="white" :finishView="finish" :backFuc="sureBack" :hasBackFuc="true"></ywBar>
     <footer>
       <ywBtn :class="{'no':!canClick}" class="cBtn cBtn-buy" text="
 确认付款" @click.native="toPay"></ywBtn>
@@ -37,7 +37,7 @@
   export default {
     data() {
       return {
-        finish:false,//是否要结束页面
+        finish: false, //是否要结束页面
         canClick: true, //按钮是否可点击
         paySelected: 'wxpay', //选中的支付方式
         payChannelList: ['wxpay'], //可选的支付方式['alipay','wxpay','ywpay']
@@ -49,7 +49,7 @@
         let device = this.whichDevice();
         let orderNum = this.$route.query.orderId;
         if (device == "androidApp") {
-          window.Android.payOrder(orderNum,this.paySelected);
+          window.Android.payOrder(orderNum, this.paySelected);
         } else if (device == "iosApp") {
           window.webkit.messageHandlers.payOrder.postMessage({
             'orderId': orderNum,
@@ -57,13 +57,44 @@
           });
         }
         setTimeout(() => {
-            this.canClick = true;
-        },500);
+          this.canClick = true;
+        }, 500);
+      },
+      //返回执行
+      sureBack() {
+        this.$confirm({
+          title: '确认要放弃付款？',
+          content: '订单会保留一段时间，请尽快支付',
+          yesText: "确认离开",
+          noText: '继续支付'
+        }).then(res => {
+          this.toBack();
+          console.log("13");
+        }).catch(err => {});
+      },
+      //返回
+      toBack() {
+        let device = this.whichDevice();
+        let index = JSON.parse(window.sessionStorage.getItem("pageIndex"));
+        //from是上一页，to是当前页
+        if ((index.to == null && index.from == null) || (index.to == 1 && index.from > index.to)) {
+          if (device == "androidApp") {
+            window.Android.finish();
+          } else if (device == "iosApp") {
+            //ActionName：原生中对应的方法名；parameter：回传的参数
+            // window.webkit.messageHandlers.ActionName.postMessage('parameter');
+            window.webkit.messageHandlers.finish.postMessage('');
+          } else {
+            window.history.back();
+          }
+        } else {
+          window.history.back();
+        }
       },
       //选择支付方式
       payChosen(channel) {
         this.paySelected = channel;
-      }
+      },
     },
     mounted() {
 

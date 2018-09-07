@@ -31,7 +31,9 @@
                   </template> -->
                   <template>
                     <div class="flex">
-                      <h6>{{item.title}}<span v-if="item.isRead==0">（未读）</span></h6>
+                      <h6>{{item.title}}
+                        <span v-if="item.isRead==0">（未读）</span>
+                      </h6>
                       <span class="time">{{item.pastDateRelease}}</span>
                     </div>
                     <div class="p" v-html="item.briefIntro">{{item.briefIntro}}</div>
@@ -93,12 +95,12 @@
               document.getElementsByClassName("mu-infinite-scroll-text")[0].innerText = "正在加载...";
             }
           });
-        }).catch((err)=>{
+        }).catch((err) => {
           this.axiosCatch(err);
         });
       },
-      goDetail(id,index) {
-        this.notices[index].isRead = 1;//已读
+      goDetail(id, index) {
+        this.notices[index].isRead = 1; //已读
         this.$router.push({
           path: '/noticeDetail',
           query: {
@@ -221,10 +223,12 @@
     color: #999999;
   }
 
-  .noticeUl p,.noticeUl .p {
+  .noticeUl p,
+  .noticeUl .p {
     line-height: .38rem;
     font-size: .28rem;
     color: #999999;
+    word-wrap: break-word;
   }
 
   .noticeUl .image {

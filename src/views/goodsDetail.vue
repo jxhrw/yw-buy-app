@@ -23,7 +23,7 @@
         <ul>
           <li>
             <div class="left">商品成色</div>
-            <div class="right">{{newOldLevel.name}}</div>
+            <div class="right">{{newOldLevel && newOldLevel.name?newOldLevel.name:''}}</div>
           </li>
         </ul>
       </div>

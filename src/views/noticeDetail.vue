@@ -82,8 +82,11 @@
 
 </style>
 <style>
-  #noticeDetail img {
+  #noticeDetail img{
     height: auto !important;
     max-width: 100% !important;
+  }
+  #noticeDetail table{
+    width: 100% !important;
   }
 </style>

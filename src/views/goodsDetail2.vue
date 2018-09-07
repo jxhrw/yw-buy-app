@@ -6,7 +6,7 @@
       <div class="shadow"></div>
       <div class="btnBox">
         <ywBtn :class="{'no':!canClick || homeGoods=='1'}" class="cBtn cBtn-ans" text="询价" @click.native="askPrice(goodsId,shopId)"></ywBtn>
-        <ywBtn :class="{'no':!canClick || homeGoods=='1'|| goodsStock<1}" class="cBtn cBtn-buy" :text="goodsStock<1?'已售罄':'立即购买'"
+        <ywBtn :class="{'no':!canClick || homeGoods=='1'|| goodsStock<1 || 'iosApp'!=device}" class="cBtn cBtn-buy" :text="goodsStock<1?'已售罄':'立即购买'"
           @click.native="toBuy(goodsId,shopId)"></ywBtn>
       </div>
     </footer>
@@ -62,35 +62,6 @@
         </ul>
         <!-- <ywBtn text='查看商家' class="btnShop" @click.native="toShop()"></ywBtn> -->
       </div>
-      <!-- <div class="baseInfo">
-      <h6>基本参数</h6>
-      <ul>
-        <li>
-          <div class="left">品牌</div>
-          <div class="right">{{baseInfo.brand}}</div>
-        </li>
-        <li>
-          <div class="left">系列</div>
-          <div class="right">{{baseInfo.series}}</div>
-        </li>
-        <li>
-          <div class="left">型号</div>
-          <div class="right">{{baseInfo.model}}</div>
-        </li>
-        <li>
-          <div class="left">序号</div>
-          <div class="right">{{baseInfo.cnName}}</div>
-        </li>
-        <li>
-          <div class="left">上市时间</div>
-          <div class="right">{{baseInfo.marketTime}}</div>
-        </li>
-        <li>
-          <div class="left">产地</div>
-          <div class="right">{{baseInfo.address}}</div>
-        </li>
-      </ul>
-    </div> -->
       <div class="proImg">
         <h6 style="padding-left:.3rem;padding-right:.3rem;">商品详情</h6>
         <div>
@@ -118,6 +89,7 @@
   export default {
     data() {
       return {
+        device:'',//设备
         sctop: false, //滚动到顶部的按钮是否出现
         slides: [], //轮播的banner图
         proName: '', //商品名称
@@ -163,14 +135,6 @@
             $this.newOldLevel = res.data.body.newOldLevel;
             $this.goodsStock = res.data.body.goodsStock;
             $this.homeGoods = res.data.body.homeGoods;
-            // this.baseInfo = {
-            //   'brand': res.data.body.brandShow,
-            //   'series': res.data.body.seriesShow,
-            //   'model': res.data.body.modelShow,
-            //   // 'brand':res.data.body.brand,
-            //   'marketTime': res.data.body.marketTime,
-            //   // 'brand':res.data.body.brand,
-            // }
           });
         }).catch((err) => {
           this.axiosCatch(err, "on");
@@ -189,6 +153,10 @@
       },
       //询价
       askPrice(goodsId, shopId) {
+        // if (this.device=="iosApp" && this.shopInfo) {
+        //   this.goTel(this.shopInfo.linkPhone);
+        //   return false;
+        // }
         this.canClick = false;
         askPriceApp({
           "targetShopId": shopId,
@@ -217,12 +185,7 @@
       },
       //查看商家
       toShop() {
-        // this.$router.push({
-        //   path: '/shopOnline',
-        //   query: {
 
-        //   }
-        // });
       },
       goMyTop() {
         this.goTop(this.$refs.content, 0);
@@ -239,6 +202,7 @@
     },
     mounted() {
       let device = this.whichDevice();
+      this.device = device;
       if (device != "androidApp" && device != "iosApp") {
         this.isApp = false;
       }

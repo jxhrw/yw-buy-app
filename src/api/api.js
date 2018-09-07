@@ -1,6 +1,6 @@
 import axios from 'axios';
 import Qs from 'qs';
-const base = '/api';
+const base = '';
 const definiens = function () {
   return axios.create({
     headers: {

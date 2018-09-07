@@ -1,14 +1,14 @@
 <template>
-  <header v-if="type=='title'">
+  <header v-if="type=='title' && isShow">
     <mu-icon value="chevron_left" right class="iconBtn" @click="historyBack()"></mu-icon>
     <h1>{{title}}</h1>
     <span class="resetBtn"></span>
   </header>
-  <header v-else-if="type=='share'" class="shareHeader">
+  <header v-else-if="type=='share' && isShow" class="shareHeader">
     <span class="iconShareBtn iconShareBtn1" @click="historyBack()"></span>
     <span v-if="shareBtnShow" class="iconShareBtn iconShareBtn2" @click="share(goodsId)"></span>
   </header>
-  <header v-else-if="type=='white'" class="whiteHeader">
+  <header v-else-if="type=='white' && isShow" class="whiteHeader">
     <mu-icon value="chevron_left" right class="iconBtn" @click="historyBack()"></mu-icon>
     <h1>{{title}}</h1>
     <span v-if="operateTxt==''" class="resetBtn"></span>
@@ -24,6 +24,9 @@
   //operateFuc bar右上角的执行方法
   //isClick bar右上角是否可点
   //finishView 返回键是否要关闭webview
+  //isShow topBar是否显示
+  //backFuc 返回按钮的额外操作
+  //hasBackFuc 返回按钮是否进行额外操作，backFuc存在即为true
   export default {
     props: {
       type: {
@@ -52,6 +55,14 @@
           return function () {}
         }
       },
+      backFuc: {
+        type: Function,
+        default: function () {}
+      },
+      hasBackFuc: {
+        type: Boolean,
+        default: false
+      },
       isClick: {
         type: Boolean,
         default: true
@@ -60,9 +71,20 @@
         type: Boolean,
         default: false
       },
+      isShow: {
+        type: Boolean,
+        default: true
+      },
     },
     methods: {
       historyBack() {
+        if (this.hasBackFuc) {
+          this.backFuc();
+        } else {
+          this.toBack();
+        }
+      },
+      toBack() {
         let device = this.whichDevice();
         let index = JSON.parse(window.sessionStorage.getItem("pageIndex"));
         //from是上一页，to是当前页

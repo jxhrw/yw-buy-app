@@ -1,20 +1,20 @@
 <template>
   <div id="address">
-    <ywBar :title="'编辑收货地址'" :operateTxt="'保存'" :isClick="canClick" :operateFuc="holdAddress" type="white"></ywBar>
+    <ywBar :title="'编辑收货地址'" :operateTxt="'保存'" :isClick="canClick" :operateFuc="holdAddress" type="white" :backFuc="sureBack" :hasBackFuc="true"></ywBar>
     <div class="content" v-show="loadingFinish">
       <ul class="myInfo">
         <li>
-          <input type="text" placeholder="收货人" v-model="addressMy.receiver">
+          <input type="text" placeholder="收货人" v-model="addressMy.receiver" v-on:input ="changeFuc">
         </li>
         <li>
-          <input type="text" placeholder="联系电话" v-model="addressMy.phone">
+          <input type="text" placeholder="联系电话" v-model="addressMy.phone" v-on:input ="changeFuc">
         </li>
         <li>
           <p class="on" @click="popupShow=!popupShow" v-if="!isInit && (addressMy.provinceShow || addressMy.cityShow ||addressMy.countryShow)">{{addressMy.provinceShow}} {{addressMy.cityShow}} {{addressMy.countryShow}}</p>
           <p v-else @click="openAndChoose">所在地区</p>
         </li>
         <li>
-          <input type="text" placeholder="详细地址" v-model="addressMy.address">
+          <input type="text" placeholder="详细地址" v-model="addressMy.address" v-on:input ="changeFuc">
         </li>
       </ul>
       <div class="isDefault">
@@ -47,6 +47,7 @@
     data() {
       return {
         isInit: true, //是否新增
+        isChange: false, //是否修改
         canClick: true, //按钮是否可点击
         popupShow: false, //弹窗是否显示
         loadingFinish: false, //数据请求完成
@@ -122,6 +123,44 @@
           this.axiosCatch(err);
         });
       },
+      //返回执行
+      sureBack() {
+        if (this.isChange) {
+          this.$confirm({
+            title: '',
+            content: '退出后将丢失您当前编辑的信息，是否退出？',
+            yesText: "退出",
+            noText: '取消'
+          }).then(res => {
+            this.toBack();
+          }).catch(err => {});
+        } else {
+          this.toBack();
+        }
+      },
+      //是否修改
+      changeFuc(){
+        this.isChange = true;
+      },
+      //返回
+      toBack() {
+        let device = this.whichDevice();
+        let index = JSON.parse(window.sessionStorage.getItem("pageIndex"));
+        //from是上一页，to是当前页
+        if ((index.to == null && index.from == null) || (index.to == 1 && index.from > index.to)) {
+          if (device == "androidApp") {
+            window.Android.finish();
+          } else if (device == "iosApp") {
+            //ActionName：原生中对应的方法名；parameter：回传的参数
+            // window.webkit.messageHandlers.ActionName.postMessage('parameter');
+            window.webkit.messageHandlers.finish.postMessage('');
+          } else {
+            window.history.back();
+          }
+        } else {
+          window.history.back();
+        }
+      },
       //地址保存
       holdAddress() {
         if (!this.addressMy.receiver || !this.addressMy.phone || !this.addressMy.province || !this.addressMy.city || !
@@ -131,12 +170,6 @@
             content: '信息不完整',
             btnText: '',
           });
-          // this.$confirm({
-          //   title: '',
-          //   content: '开发商',
-          //   yesText: "取消",
-          //   noText: '确定'
-          // });
           return false;
         }
         let myreg = /^[1][3,4,5,6,7,8,9][0-9]{9}$/;
@@ -175,6 +208,7 @@
       },
       //勾选取消默认
       defaultFuc() {
+        this.changeFuc();
         this.addressMy.isDefault = this.addressMy.isDefault == '0' ? '1' : '0';
       },
       //阻止冒泡
@@ -195,6 +229,7 @@
       //数据初始化
       dataInit() {
         this.isInit = true; //是否新增
+        this.isChange = false;//是否修改
         this.canClick = true; //按钮是否可点击
         this.popupShow = false; //弹窗是否显示
         this.loadingFinish = false;
@@ -217,6 +252,7 @@
       addressChange(value, index) {
         let myCode = '';
         this.isInit = false;
+        this.changeFuc();
         switch (index) {
           case 0:
             myCode = this.addressShowList.code.provinceCode[this.addressShowList.show.provinceShow.indexOf(value)];
@@ -468,4 +504,5 @@
     width: 100%;
 
   }
+
 </style>

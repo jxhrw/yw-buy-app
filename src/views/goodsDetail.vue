@@ -23,7 +23,7 @@
         <ul>
           <li>
             <div class="left">商品成色</div>
-            <div class="right">{{newOldLevel && newOldLevel.name?newOldLevel.name:''}}</div>
+            <div class="right">{{newOldLevel && newOldLevel.name?newOldLevel.name:'—'}}</div>
           </li>
         </ul>
       </div>
@@ -32,7 +32,7 @@
         <ul>
           <li v-for='(item,index) in productAttributeList' :key="index">
             <div class="left">{{item.title}}</div>
-            <div class="right">{{item.itemValueShow}}</div>
+            <div class="right">{{item.itemValueShow || '—'}}</div>
           </li>
         </ul>
       </div>
@@ -41,15 +41,15 @@
         <ul>
           <li>
             <div class="left">供货商</div>
-            <div class="right">{{shopInfo && shopInfo.cnName ? shopInfo.cnName :''}}</div>
+            <div class="right">{{shopInfo && shopInfo.cnName ? shopInfo.cnName :'—'}}</div>
           </li>
           <li>
             <div class="left">联系电话</div>
-            <div class="right">{{shopInfo && shopInfo.linkPhone ? shopInfo.linkPhone :''}}</div>
+            <div class="right">{{shopInfo && shopInfo.linkPhone ? shopInfo.linkPhone :'—'}}</div>
           </li>
           <li>
             <div class="left">联系地址</div>
-            <div class="right">{{shopInfo && shopInfo.address ? shopInfo.address :''}}</div>
+            <div class="right">{{shopInfo && shopInfo.address ? shopInfo.address :'—'}}</div>
           </li>
         </ul>
         <!-- <ywBtn text='查看商家' class="btnShop" @click.native="toShop()"></ywBtn> -->

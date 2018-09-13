@@ -6,7 +6,7 @@
       <div class="shadow"></div>
       <div class="btnBox">
         <ywBtn :class="{'no':!canClick || homeGoods=='1'}" class="cBtn cBtn-ans" text="询价" @click.native="askPrice(goodsId,shopId)"></ywBtn>
-        <ywBtn :class="{'no':!canClick || homeGoods=='1' || goodsStock<1 || 'iosApp'!=device}" class="cBtn cBtn-buy" :text="goodsStock<1?'已售罄':'立即购买'"
+        <ywBtn :class="{'no':!canClick || homeGoods=='1' || goodsStock<1}" class="cBtn cBtn-buy" :text="goodsStock<1?'已售罄':'立即购买'"
           @click.native="toBuy(goodsId,shopId)"></ywBtn>
       </div>
     </footer>
@@ -31,7 +31,7 @@
         <ul>
           <li>
             <div class="left">商品成色</div>
-            <div class="right">{{newOldLevel && newOldLevel.name?newOldLevel.name:''}}</div>
+            <div class="right">{{newOldLevel && newOldLevel.name?newOldLevel.name:'—'}}</div>
           </li>
         </ul>
       </div>
@@ -40,7 +40,7 @@
         <ul>
           <li v-for='(item,index) in productAttributeList' :key="index">
             <div class="left">{{item.title}}</div>
-            <div class="right">{{item.itemValueShow}}</div>
+            <div class="right">{{item.itemValueShow || '—'}}</div>
           </li>
         </ul>
       </div>
@@ -49,15 +49,15 @@
         <ul>
           <li>
             <div class="left">供货商</div>
-            <div class="right">{{shopInfo && shopInfo.cnName ? shopInfo.cnName :''}}</div>
+            <div class="right">{{shopInfo && shopInfo.cnName ? shopInfo.cnName :'—'}}</div>
           </li>
           <li>
             <div class="left">联系电话</div>
-            <div class="right">{{shopInfo && shopInfo.linkPhone ? shopInfo.linkPhone :''}}</div>
+            <div class="right">{{shopInfo && shopInfo.linkPhone ? shopInfo.linkPhone :'—'}}</div>
           </li>
           <li>
             <div class="left">联系地址</div>
-            <div class="right">{{shopInfo && shopInfo.address ? shopInfo.address :''}}</div>
+            <div class="right">{{shopInfo && shopInfo.address ? shopInfo.address :'—'}}</div>
           </li>
         </ul>
         <!-- <ywBtn text='查看商家' class="btnShop" @click.native="toShop()"></ywBtn> -->
@@ -419,6 +419,7 @@
     border-radius: 40px;
     width: 1.80rem;
     height: .6rem;
+    line-height: 0.6rem;
     color: #fff;
   }
 

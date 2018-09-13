@@ -41,12 +41,7 @@ export default (Vue) => {
   Vue.prototype.axiosCatch = function (err, bol) {
     this.errorTips(err.response.status);
     if (bol && bol == 'on' && err.response.status == "401") {
-      let device = this.whichDevice();
-      if (device == "androidApp") {
-        window.Android.TokenDiss();
-      } else if (device == "iosApp") {
-        window.webkit.messageHandlers.TokenDiss.postMessage('');
-      }
+      this.appSignIn();
     }
     //load 可下载app
     if (bol && bol == 'load' && err.response.status == "401") {
@@ -63,6 +58,16 @@ export default (Vue) => {
     }
   }
 
+  //调用app登录
+    Vue.prototype.appSignIn = function () {
+      let device = this.whichDevice();
+      if (device == "androidApp") {
+        window.Android.TokenDiss();
+      } else if (device == "iosApp") {
+        window.webkit.messageHandlers.TokenDiss.postMessage('');
+      }
+    }
+
   //打电话
   Vue.prototype.goTel = function (phone) {
     let device = this.whichDevice();
@@ -72,9 +77,6 @@ export default (Vue) => {
       window.location.href = 'tel:' + phone;
     }
   }
-
-
-
 
   //判断当前设备及环境
   Vue.prototype.whichDevice = function () {

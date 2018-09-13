@@ -5,8 +5,8 @@
     <footer>
       <div class="shadow"></div>
       <div class="btnBox">
-        <ywBtn :class="{'no':!canClick || homeGoods=='1'}" class="cBtn cBtn-ans" text="询价" @click.native="askPrice(goodsId,shopId)"></ywBtn>
-        <ywBtn :class="{'no':!canClick || homeGoods=='1'|| goodsStock<1 || 'iosApp'!=device}" class="cBtn cBtn-buy" :text="goodsStock<1?'已售罄':'立即购买'"
+        <ywBtn :class="{'no':!canClick || homeGoods=='1'||proPrice==-1}" class="cBtn cBtn-ans" text="询价" @click.native="askPrice(goodsId,shopId)"></ywBtn>
+        <ywBtn :class="{'no':!canClick || homeGoods=='1'||proPrice==-1 || goodsStock<1}" class="cBtn cBtn-buy" :text="goodsStock<1?'已售罄':'立即购买'"
           @click.native="toBuy(goodsId,shopId)"></ywBtn>
       </div>
     </footer>
@@ -22,8 +22,8 @@
         </swiper>
       </div>
       <div class="proInfo">
-        <p class="proPrice">
-          <span>￥</span>{{proPrice}}</p>
+        <p class="proPrice" v-if="proPrice==-1"><span>登录查看同行价</span></p>
+        <p class="proPrice" v-else><span >￥</span>{{proPrice}}</p>
         <p class="proName">{{proName}}</p>
       </div>
       <div class="proAttr">
@@ -31,7 +31,7 @@
         <ul>
           <li>
             <div class="left">商品成色</div>
-            <div class="right">{{newOldLevel && newOldLevel.name?newOldLevel.name:''}}</div>
+            <div class="right">{{newOldLevel && newOldLevel.name?newOldLevel.name:'—'}}</div>
           </li>
         </ul>
       </div>
@@ -40,7 +40,7 @@
         <ul>
           <li v-for='(item,index) in productAttributeList' :key="index">
             <div class="left">{{item.title}}</div>
-            <div class="right">{{item.itemValueShow}}</div>
+            <div class="right">{{item.itemValueShow || '—'}}</div>
           </li>
         </ul>
       </div>
@@ -49,18 +49,18 @@
         <ul>
           <li>
             <div class="left">供货商</div>
-            <div class="right">{{shopInfo && shopInfo.cnName ? shopInfo.cnName :''}}</div>
+            <div class="right">{{shopInfo && shopInfo.cnName ? shopInfo.cnName :'—'}}</div>
           </li>
           <li>
             <div class="left">联系电话</div>
-            <div class="right">{{shopInfo && shopInfo.linkPhone ? shopInfo.linkPhone :''}}</div>
+            <div class="right">{{shopInfo && shopInfo.linkPhone ? shopInfo.linkPhone :'—'}}</div>
           </li>
           <li>
             <div class="left">联系地址</div>
-            <div class="right">{{shopInfo && shopInfo.address ? shopInfo.address :''}}</div>
+            <div class="right">{{shopInfo && shopInfo.address ? shopInfo.address :'—'}}</div>
           </li>
         </ul>
-        <!-- <ywBtn text='查看商家' class="btnShop" @click.native="toShop()"></ywBtn> -->
+        <ywBtn v-if="proPrice==-1" text='登录后查看商家信息' class="btnShop" @click.native="toSignIn()"></ywBtn>
       </div>
       <div class="proImg">
         <h6 style="padding-left:.3rem;padding-right:.3rem;">商品详情</h6>
@@ -183,9 +183,9 @@
           }
         });
       },
-      //查看商家
-      toShop() {
-
+      //登录
+      toSignIn() {
+        this.appSignIn();
       },
       goMyTop() {
         this.goTop(this.$refs.content, 0);
@@ -214,6 +214,9 @@
       this.detailInfo({
         'goodsId': goodsId
       });
+    },
+    deactivated: function () {
+      console.log("我已经离开了！");
     },
   };
 
@@ -347,9 +350,10 @@
   .btnShop {
     border: 1px solid #000000;
     border-radius: 22px;
-    width: 1.6rem;
-    height: .42rem;
-    line-height: .4rem;
+    padding: 0 .2rem;
+    width: auto;
+    height: .44rem;
+    line-height: .42rem;
     font-family: PingFangSC-Regular;
     font-size: .24rem;
     color: #000000;
@@ -410,6 +414,7 @@
     border-radius: 40px;
     width: 1.80rem;
     height: .6rem;
+    line-height: 0.6rem;
     color: #fff;
   }
 

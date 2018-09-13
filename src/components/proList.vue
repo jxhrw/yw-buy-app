@@ -3,7 +3,7 @@
     <template v-for="(item,index) in items">
       <li :key="index" @click="jumpHref(item.id,item.detailUrl)">
         <div v-if="item.image=='https://youwatch.oss-cn-beijing.aliyuncs.com/null'" class="imgDiv" :style="{ 'background-image': 'url('+imgDefault+')'}"></div>
-        <div v-else class="imgDiv" :style="{ 'background-image': 'url('+item.image+')'}"></div>
+        <div v-else class="imgDiv" :style="{ 'background-image': 'url('+item.image+'?x-oss-process=image/resize,w_200)'}"></div>
         <div class="infoBox">
           <p class="itName">{{item.name}}</p>
           <p class="itPrice">

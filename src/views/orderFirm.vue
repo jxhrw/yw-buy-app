@@ -62,7 +62,7 @@
   export default {
     data() {
       return {
-        canClick: true, //按钮是否可点击
+        canClick: false, //按钮是否可点击
         myAddress: {
           isHave: true, //是否存在
           detail: {}, //具体信息
@@ -85,6 +85,7 @@
       getAddressInfo() {
         listReceiverAddress().then(res => {
           let $this = this;
+          this.canClick = true;
           this.ajaxResult(res, function () {
             $this.myAddress.isHave = res.data.body.length > 0;
             let index = res.data.body.length > 0 ? 0 : -1;
@@ -96,6 +97,7 @@
             $this.myAddress.detail = index >= 0 ? res.data.body[index] : {};
           });
         }).catch((err) => {
+          this.canClick = true;
           this.axiosCatch(err);
         });
       },

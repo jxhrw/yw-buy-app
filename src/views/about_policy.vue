@@ -101,6 +101,9 @@
         this.isApp = false;
       }
     },
+    deactivated: function () {
+      console.log("我已经离开了！");
+    },
   };
 
 </script>

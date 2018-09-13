@@ -1,6 +1,6 @@
 import axios from 'axios';
 import Qs from 'qs';
-const base = '';
+const base = '/api';
 const definiens = function () {
   return axios.create({
     headers: {
@@ -162,4 +162,11 @@ export const editReceiverAddress = pams => {
 //提交订单
 export const submitOrder = pams => {
   return apiJson.post(`${base}/fund-account/deal/submitOrder`, pams)
+};
+
+//支付方式
+export const paymentMethod = pams => {
+  return api.get(`${base}/fund-account/deal/paymentMethod`, {
+    "params": pams
+  })
 };

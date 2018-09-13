@@ -7,24 +7,15 @@
     </footer>
     <div class="content">
       <ul class="payList">
-        <li v-if="payChannelList.indexOf('alipay')>-1" class="pay_ali" :class="{'select':'alipay'==paySelected}" @click="payChosen('alipay')">
-          <div class="pay-single">
-            <h3>支付宝</h3>
-            <p v-if="!false">文案文案文案文案文案文案文案</p>
-          </div>
-        </li>
-        <li v-if="payChannelList.indexOf('wxpay')>-1" class="pay_wx" :class="{'select':'wxpay'==paySelected}" @click="payChosen('wxpay')">
-          <div class="pay-single">
-            <h3>微信支付</h3>
-            <p v-if="false"></p>
-          </div>
-        </li>
-        <li v-if="payChannelList.indexOf('ywpay')>-1" class="pay_yw" :class="{'select':'ywpay'==paySelected}" @click="payChosen('ywpay')">
-          <div class="pay-single">
-            <h3>余额支付</h3>
-            <p v-if="false"></p>
-          </div>
-        </li>
+        <template v-for="(item,index) in payMethodList">
+          <li :key="index" :class="[item.code,item.code==paySelected?'select':'',item.description && item.description.indexOf('余额不足')>-1?'no':'']"
+            @click="payChosen(item.code)">
+            <div class="pay-single">
+              <h3>{{item.name}}</h3>
+              <p v-if="item.description">{{item.description}}</p>
+            </div>
+          </li>
+        </template>
       </ul>
     </div>
   </div>
@@ -32,15 +23,15 @@
 
 <script>
   import {
-    helpCenterList
+    paymentMethod
   } from '../api/api'
   export default {
     data() {
       return {
         finish: false, //是否要结束页面
-        canClick: true, //按钮是否可点击
-        paySelected: 'wxpay', //选中的支付方式
-        payChannelList: ['wxpay'], //可选的支付方式['alipay','wxpay','ywpay']
+        canClick: false, //按钮是否可点击
+        paySelected: '', //选中的支付方式wxpay
+        payMethodList: [], //可选的支付方式,非固定
       }
     },
     methods: {
@@ -48,12 +39,20 @@
         this.canClick = false;
         let device = this.whichDevice();
         let orderNum = this.$route.query.orderId;
+        let ts_method = ''
+        if (this.paySelected == 'balance_pay') {
+          ts_method = 'ywpay';
+        } else if (this.paySelected == 'wechat_pay') {
+          ts_method = 'wxpay';
+        } else if (this.paySelected == 'ali_pay') {
+          ts_method = 'alipay';
+        }
         if (device == "androidApp") {
-          window.Android.payOrder(orderNum, this.paySelected);
+          window.Android.payOrder(orderNum, ts_method);
         } else if (device == "iosApp") {
           window.webkit.messageHandlers.payOrder.postMessage({
             'orderId': orderNum,
-            'channel': this.paySelected
+            'channel': ts_method
           });
         }
         setTimeout(() => {
@@ -76,20 +75,34 @@
       toBack() {
         let device = this.whichDevice();
         let index = JSON.parse(window.sessionStorage.getItem("pageIndex"));
-        //from是上一页，to是当前页
-        if ((index.to == null && index.from == null) || (index.to == 1 && index.from > index.to)) {
-          if (device == "androidApp") {
-            window.Android.finish();
-          } else if (device == "iosApp") {
-            //ActionName：原生中对应的方法名；parameter：回传的参数
-            // window.webkit.messageHandlers.ActionName.postMessage('parameter');
-            window.webkit.messageHandlers.finish.postMessage('');
-          } else {
-            window.history.back();
-          }
+        if (device == "androidApp") {
+          try {window.Android.goOrderList();} 
+          catch (err) {window.history.back();}
+        } else if (device == "iosApp") {
+          try { window.webkit.messageHandlers.goOrderList.postMessage('');} 
+          catch (err) {window.history.back();}
         } else {
           window.history.back();
         }
+      },
+      //所有支付方式
+      paymentMethodFuc() {
+        let orderId = this.$route.query.orderId;
+        paymentMethod({
+          "orderNo": orderId
+        }).then(res => {
+          let $this = this;
+          this.canClick = true;
+          this.ajaxResult(res, function () {
+            $this.payMethodList = res.data.body;
+            if ($this.payMethodList.length > 0) {
+              $this.paySelected = $this.payMethodList[0].code;
+            }
+          });
+        }).catch((err) => {
+          this.canClick = true;
+          this.axiosCatch(err);
+        });
       },
       //选择支付方式
       payChosen(channel) {
@@ -101,6 +114,7 @@
     },
     activated() {
       this.finish = this.$route.query.isBreak == "1";
+      this.paymentMethodFuc();
     },
   };
 
@@ -168,15 +182,15 @@
     border-bottom: none;
   }
 
-  .pay_ali {
+  .ali_pay {
     background-image: url('https://youwatch.oss-cn-beijing.aliyuncs.com/app/icon_alipay.png');
   }
 
-  .pay_wx {
+  .wechat_pay {
     background-image: url('https://youwatch.oss-cn-beijing.aliyuncs.com/app/icon_wxpay.png');
   }
 
-  .pay_yw {
+  .balance_pay {
     background-image: url('https://youwatch.oss-cn-beijing.aliyuncs.com/app/icon_ywpay.png');
   }
 
@@ -188,6 +202,14 @@
 
   .payList li.select .pay-single {
     background-image: url('https://youwatch.oss-cn-beijing.aliyuncs.com/app/icon_radio_selected.png');
+  }
+
+  .payList li.no {
+    pointer-events: none;
+  }
+
+  .payList li.no .pay-single {
+    background-image: none;
   }
 
   .pay-single h3 {

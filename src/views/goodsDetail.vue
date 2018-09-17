@@ -220,6 +220,7 @@
       this.$refs.content.addEventListener('scroll', this.handleScroll);
     },
     activated() {
+      this.pagePointBurial('spxq','商品详情页b2c');
       this.initData();
       let goodsId = this.$route.query.goodsAgentId;
       this.detailInfo({

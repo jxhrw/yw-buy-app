@@ -12,7 +12,7 @@ export default (Vue) => {
     if (data.data.status == "200") {
       successFuc(data.data);
     } else {
-      this.errorTips(data.data.status,data.data.message);
+      this.errorTips(data.data.status, data.data.message);
       if (failFuc) {
         failFuc(data.data);
       }
@@ -50,23 +50,23 @@ export default (Vue) => {
         window.Android.TokenDiss();
       } else if (device == "iosApp") {
         window.webkit.messageHandlers.TokenDiss.postMessage('');
-      }else if(device == "androidWx" || device == "android"){
+      } else if (device == "androidWx" || device == "android") {
 
-      }else if(device == "iosWx" || device == "ios"){
+      } else if (device == "iosWx" || device == "ios") {
 
       }
     }
   }
 
   //调用app登录
-    Vue.prototype.appSignIn = function () {
-      let device = this.whichDevice();
-      if (device == "androidApp") {
-        window.Android.TokenDiss();
-      } else if (device == "iosApp") {
-        window.webkit.messageHandlers.TokenDiss.postMessage('');
-      }
+  Vue.prototype.appSignIn = function () {
+    let device = this.whichDevice();
+    if (device == "androidApp") {
+      window.Android.TokenDiss();
+    } else if (device == "iosApp") {
+      window.webkit.messageHandlers.TokenDiss.postMessage('');
     }
+  }
 
   //打电话
   Vue.prototype.goTel = function (phone) {
@@ -83,22 +83,22 @@ export default (Vue) => {
     let device = "";
     let ua = window.navigator.userAgent.toLowerCase();
     if (/(Android|Adr)/i.test(navigator.userAgent)) {
-      if(/youwatch/i.test(navigator.userAgent)){
+      if (/youwatch/i.test(navigator.userAgent)) {
         device = 'androidApp';
-      }else if (ua.match(/MicroMessenger/i) == 'micromessenger') {
+      } else if (ua.match(/MicroMessenger/i) == 'micromessenger') {
         device = 'androidWx';
-      }else{
+      } else {
         device = 'android';
       }
-    }else if (/(iPhone|iPad|iPod|iOS|iphone|ipad|ipod|ios)/i.test(navigator.userAgent)) {
-      if(/youwatch/i.test(navigator.userAgent)){
+    } else if (/(iPhone|iPad|iPod|iOS|iphone|ipad|ipod|ios)/i.test(navigator.userAgent)) {
+      if (/youwatch/i.test(navigator.userAgent)) {
         device = 'iosApp';
-      }else if (ua.match(/MicroMessenger/i) == 'micromessenger') {
+      } else if (ua.match(/MicroMessenger/i) == 'micromessenger') {
         device = 'iosWx';
-      }else{
+      } else {
         device = 'ios';
       }
-    }else{
+    } else {
       device = 'other';
     }
     return device;
@@ -114,19 +114,36 @@ export default (Vue) => {
   }
 
   //错误提示
-  Vue.prototype.errorTips = function(status,message){
-    if(status == "401"){
+  Vue.prototype.errorTips = function (status, message) {
+    if (status == "401") {
       this.toast(`登录超时`);
-    }else if(status == "500"){
+    } else if (status == "500") {
       this.toast(`服务器错误`);
-    }else if(status == "fund_error_001"){
+    } else if (status == "fund_error_001") {
       this.toast('该商品库存不足');
-    }else if(!status && message){
+    } else if (!status && message) {
       this.toast(`${message}`);
-    }else if(message && message.length < 10){
+    } else if (message && message.length < 10) {
       this.toast(`${message}`);
-    }else{
+    } else {
       this.toast(`HTTP ${status}`);
+    }
+  }
+
+  //页面埋点
+  Vue.prototype.pagePointBurial = function (id, name) {
+    let device = this.whichDevice();
+    if (device == "androidApp") {
+      try {
+        window.Android.pointBurial(id, name);
+      } catch (err) {}
+    } else if (device == "iosApp") {
+      try {
+        window.webkit.messageHandlers.pointBurial.postMessage({
+          'id': id,
+          'name': name
+        });
+      } catch (err) {}
     }
   }
 };

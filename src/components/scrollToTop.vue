@@ -21,8 +21,8 @@
     height: 1rem;
     background: url('../assets/imgs/iv_move_to_top.png') no-repeat center/contain;
     position: absolute;
-    bottom: 1rem;
-    right: 1rem;
+    bottom: 0.5rem;
+    right: 0.5rem;
     z-index: 1;
   }
 

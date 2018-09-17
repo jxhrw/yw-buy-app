@@ -153,10 +153,10 @@
       },
       //询价
       askPrice(goodsId, shopId) {
-        // if (this.device=="iosApp" && this.shopInfo) {
-        //   this.goTel(this.shopInfo.linkPhone);
-        //   return false;
-        // }
+        if (this.device=="iosApp" && this.shopInfo) {
+          this.goTel(this.shopInfo.linkPhone);
+          return false;
+        }
         this.canClick = false;
         askPriceApp({
           "targetShopId": shopId,
@@ -176,6 +176,7 @@
       },
       //购买
       toBuy(goodsId, shopId) {
+        this.pagePointBurial('spxqb2b','商品详情页b2b');
         this.$router.push({
           path: '/orderFirm',
           query: {
@@ -209,6 +210,7 @@
       this.$refs.content.addEventListener('scroll', this.handleScroll);
     },
     activated() {
+      this.pagePointBurial('spxqb2b','商品详情页b2b');
       this.initData();
       let goodsId = this.$route.query.goodsId;
       this.detailInfo({

@@ -126,6 +126,7 @@
   }
 
   /* toast样式 */
+
   .mint-toast {
     padding: 5px 10px !important;
   }
@@ -136,10 +137,11 @@
 
 
   /* 加载更多的样式 */
+
   .mu-infinite-scroll {
-    background-color: #fafafa!important;
-    height: .6rem!important;
-    padding: .2rem 0 0.2rem 0!important;
+    background-color: #fafafa !important;
+    height: .6rem !important;
+    padding: .2rem 0 0.2rem 0 !important;
   }
 
   .mu-circle-wrapper {
@@ -148,12 +150,13 @@
   }
 
   .mu-infinite-scroll-text {
-    font-size: .24rem!important;
-    color: #999!important;
-    margin-right:16px!important;
+    font-size: .24rem !important;
+    color: #999 !important;
+    margin-right: 16px !important;
   }
 
   /* alert,confirm弹窗的样式 */
+
   .wc-popup {
     border-radius: 4px !important;
   }
@@ -207,6 +210,7 @@
     color: #999 !important;
     line-height: .4rem !important;
     text-align: left !important;
-
+    word-wrap: break-word !important;
   }
+
 </style>

@@ -76,11 +76,25 @@
         let device = this.whichDevice();
         let index = JSON.parse(window.sessionStorage.getItem("pageIndex"));
         if (device == "androidApp") {
-          try {window.Android.goOrderList();} 
-          catch (err) {window.history.back();}
+          try {
+            window.Android.goOrderList();
+          } catch (err) {
+            try {
+              window.Android.finish();
+            } catch (err) {
+              window.history.back();
+            }
+          }
         } else if (device == "iosApp") {
-          try { window.webkit.messageHandlers.goOrderList.postMessage('');} 
-          catch (err) {window.history.back();}
+          try {
+            window.webkit.messageHandlers.goOrderList.postMessage('');
+          } catch (err) {
+            try {
+              window.webkit.messageHandlers.finish.postMessage('');
+            } catch (err) {
+              window.history.back();
+            }
+          }
         } else {
           window.history.back();
         }

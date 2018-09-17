@@ -153,10 +153,10 @@
       },
       //询价
       askPrice(goodsId, shopId) {
-        // if (this.device=="iosApp" && this.shopInfo) {
-        //   this.goTel(this.shopInfo.linkPhone);
-        //   return false;
-        // }
+        if (this.device=="iosApp" && this.shopInfo) {
+          this.goTel(this.shopInfo.linkPhone);
+          return false;
+        }
         this.canClick = false;
         askPriceApp({
           "targetShopId": shopId,

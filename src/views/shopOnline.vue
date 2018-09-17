@@ -6,7 +6,7 @@
 
     <div class="top-bar" id="top-bar" :style="{'position':'absolute'}">
       <div v-if="isApp" style="float:left" class="topBtnLeft" @click="finish()"></div>
-      <div v-if="isApp" style="float:right" class="topBtnRight" @click="shareUrl(shopInfoTxt)"></div>
+      <div v-if="isApp && false" style="float:right" class="topBtnRight" @click="shareUrl(shopInfoTxt)"></div>
       <form action="javascript:;" class="searchForm">
         <input id="searchTxt" type="search" @keyup.enter="search()" v-model="searchTxt" :placeholder="placeholder" />
       </form>
@@ -273,6 +273,7 @@
       },
       //分享网页
       shareUrl(shopInfo) {
+        this.pagePointBurial('wdmd_zdfx','我的门店中整店分享');
         let device = this.whichDevice();
         let url = window.location.href.split("#/")[0] + "#/shopHv?shopId="+shopInfo.id;
         if (device == "androidApp") {
@@ -308,6 +309,7 @@
       }
     },
     activated() {
+      this.pagePointBurial('wdmd','我的门店');
       let scrollTop = 0;
       let shopInfoCH = document.getElementById("shopInfo").offsetTop;
       let topBarHeight = document.getElementById("top-bar").clientHeight;

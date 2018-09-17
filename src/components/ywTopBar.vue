@@ -103,6 +103,7 @@
         }
       },
       share(id) {
+        this.pagePointBurial('spxq_spfx','商品详情页中商品分享按钮');
         let device = this.whichDevice();
         if (device == "androidApp") {
           window.Android.getGoodsId(id);

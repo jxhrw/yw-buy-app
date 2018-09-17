@@ -26,7 +26,7 @@
             $this.info = res.data.body;
           });
         }).catch((err) => {
-          this.axiosCatch(err);
+          this.axiosCatch(err,'on');
         });
       },
       initData() {

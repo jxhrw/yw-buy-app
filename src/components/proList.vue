@@ -2,8 +2,9 @@
   <ul class="proList">
     <template v-for="(item,index) in items">
       <li :key="index" @click="jumpHref(item.id,item.detailUrl)">
-        <div v-if="item.image=='https://youwatch.oss-cn-beijing.aliyuncs.com/null'" class="imgDiv" :style="{ 'background-image': 'url('+imgDefault+')'}"></div>
-        <div v-else class="imgDiv" :style="{ 'background-image': 'url('+item.image+'?x-oss-process=image/resize,w_200)'}"></div>
+        <div class="imgDiv">
+          <img v-lazy="item.image+'?x-oss-process=image/resize,limit_0,m_fill,w_400,h_400'" width="100%" height="100%">
+        </div>
         <div class="infoBox">
           <p class="itName">{{item.name}}</p>
           <p class="itPrice">
@@ -19,7 +20,6 @@
 <script>
 // isShare 是否可分享（是否是app）
 // isSelf 是否是自个商家
-  import imgDefault from '@/assets/imgs/img_default.png'
   import imgShare from '@/assets/imgs/icon_share2.png'
   export default {
     props: {
@@ -44,12 +44,12 @@
     },
     data() {
       return {
-        imgDefault: imgDefault,
         imgShare: imgShare,
       }
     },
     methods: {
       jumpHref(id,url) {
+        this.pagePointBurial('wdmd_jrsx','我的门店中进入商品详情页');
         let pathMy = this.isSelf ? '/goodsDetail':'/goodsDetHv';
         let obj = {'goodsAgentId':id};
         // let pathUrl = url;
@@ -60,6 +60,7 @@
         });
       },
       share(id) {
+        this.pagePointBurial('wdmd_spfx','我的门店中商品分享按钮');
         event.stopPropagation();
         let device = this.whichDevice();
         if (device == "androidApp") {
@@ -70,7 +71,6 @@
       }
     },
     mounted() {
-      // this.imgDefault = ;
     },
   }
 

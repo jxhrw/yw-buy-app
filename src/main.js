@@ -36,6 +36,15 @@ Vue.component('swiperSlide', swiperSlide);
 // import { Toast } from 'mint-ui';
 import 'mint-ui/lib/style.css'
 
+//图片懒加载
+//error 图片路径错误时加载图片
+//loading 预加载图片
+import VueLazyLoad from 'vue-lazyload'
+Vue.use(VueLazyLoad,{
+    error:'https://youwatch.oss-cn-beijing.aliyuncs.com/app%2Fimg_default.png',
+    loading:'https://youwatch.oss-cn-beijing.aliyuncs.com/app%2Fimg_default.png'
+})
+
 //自定义组件
 import Prolist from './components/proList'
 import ywBtn from './components/ywButton'

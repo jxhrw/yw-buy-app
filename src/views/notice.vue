@@ -96,7 +96,7 @@
             }
           });
         }).catch((err) => {
-          this.axiosCatch(err);
+          this.axiosCatch(err,'on');
         });
       },
       goDetail(id, index) {

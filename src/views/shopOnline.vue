@@ -6,7 +6,7 @@
 
     <div class="top-bar" id="top-bar" :style="{'position':'absolute'}">
       <div v-if="isApp" style="float:left" class="topBtnLeft" @click="finish()"></div>
-      <div v-if="isApp && false" style="float:right" class="topBtnRight" @click="shareUrl(shopInfoTxt)"></div>
+      <div v-if="isApp" style="float:right" class="topBtnRight" @click="shareUrl(shopInfoTxt)"></div>
       <form action="javascript:;" class="searchForm">
         <input id="searchTxt" type="search" @keyup.enter="search()" v-model="searchTxt" :placeholder="placeholder" />
       </form>

@@ -21,6 +21,9 @@
           <div class="swiper-pagination" slot="pagination"></div>
         </swiper>
       </div>
+      <div class="rushBuy">
+        
+      </div> 
       <div class="proInfo">
         <p class="proPrice">
           <span>￥</span>{{proPrice}}</p>
@@ -153,10 +156,10 @@
       },
       //询价
       askPrice(goodsId, shopId) {
-        if (this.device=="iosApp" && this.shopInfo) {
-          this.goTel(this.shopInfo.linkPhone);
-          return false;
-        }
+        // if (this.device=="iosApp" && this.shopInfo) {
+        //   this.goTel(this.shopInfo.linkPhone);
+        //   return false;
+        // }
         this.canClick = false;
         askPriceApp({
           "targetShopId": shopId,

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import Qs from 'qs';
-const base = '';
+const base = '/api';
 const definiens = function () {
   return axios.create({
     headers: {
@@ -36,13 +36,13 @@ const getCookie = function (name) {
     return unescape(arr[2]);
   }
 }
-let api = definiens();//需要token
+let apiToken = definiens();//需要token
 let axiosType = definiensType();//不需要token
-let apiJson = definiensJson();//json格式,需要token
+let apiJsonToken = definiensJson();//json格式,需要token
 
 //我的商品列表
 export const queryGoodsPage = pams => {
-  return api.get(`${base}/goods-warehouse/goodsShow/queryMyGoodsPage`, {
+  return apiToken.get(`${base}/goods-warehouse/goodsShow/queryMyGoodsPage`, {
     "params": pams
   });
 };
@@ -56,14 +56,14 @@ export const queryMyGoodsPageForShare = pams => {
 
 //商品详情
 export const loadGoodsDetail = pams => {
-  return api.get(`${base}/goods-warehouse/goodsShow/loadGoodsDetail`, {
+  return apiToken.get(`${base}/goods-warehouse/goodsShow/loadGoodsDetail`, {
     "params": pams
   })
 };
 
 //我的商品详情
 export const loadMyGoodsDetail = pams => {
-  return api.get(`${base}/goods-warehouse/goodsShow/loadMyGoodsDetail`, {
+  return apiToken.get(`${base}/goods-warehouse/goodsShow/loadMyGoodsDetail`, {
     "params": pams
   })
 };
@@ -75,9 +75,16 @@ export const loadMyGoodsDetailForShare = pams => {
   })
 };
 
+//抢购商品详情
+export const loadRushBuyGoodsDetail = pams => {
+  return apiToken.get(`${base}/goods-warehouse/goodsShow/loadRushBuyGoodsDetail`, {
+    "params": pams
+  })
+};
+
 //获取店铺信息
 export const loadShopInfo = pams => {
-  return api.get(`${base}/user-center/myShop/loadShopInfo`, {
+  return apiToken.get(`${base}/user-center/myShop/loadShopInfo`, {
     "params": pams
   })
 };
@@ -98,14 +105,14 @@ export const queryDic = pams => {
 
 //分页查询公告列表
 export const queryAffichePage = pams => {
-  return api.get(`${base}/message-provider-service/affiche/queryAffichePage`, {
+  return apiToken.get(`${base}/message-provider-service/affiche/queryAffichePage`, {
     "params": pams
   })
 };
 
 //查询公告消息详情
 export const queryAfficheDetail = pams => {
-  return api.get(`${base}/message-provider-service/affiche/queryAfficheDetail`, {
+  return apiToken.get(`${base}/message-provider-service/affiche/queryAfficheDetail`, {
     "params": pams
   })
 };
@@ -119,7 +126,7 @@ export const helpCenterList = pams => {
 
 //询价
 export const askPriceApp = pams => {
-  return apiJson.post(`${base}/user-center/askprice/askPriceApp`,pams)
+  return apiJsonToken.post(`${base}/user-center/askprice/askPriceApp`,pams)
 };
 
 export const loadRootLevel = pams => {
@@ -137,36 +144,46 @@ export const loadNextLevel = pams => {
 
 //查询收货地址列表
 export const listReceiverAddress = pams => {
-  return api.get(`${base}/fund-account/deal/listReceiverAddress`, {
+  return apiToken.get(`${base}/fund-account/deal/listReceiverAddress`, {
     "params": pams
   })
 };
 
 //查询单个收货地址
 export const loadReceiverAddress = pams => {
-  return api.get(`${base}/fund-account/deal/loadReceiverAddress`, {
+  return apiToken.get(`${base}/fund-account/deal/loadReceiverAddress`, {
     "params": pams
   })
 };
 
 //新增收货地址
 export const addReceiverAddress = pams => {
-  return apiJson.post(`${base}/fund-account/deal/addReceiverAddress`, pams)
+  return apiJsonToken.post(`${base}/fund-account/deal/addReceiverAddress`, pams)
 };
 
 //修改收货地址
 export const editReceiverAddress = pams => {
-  return apiJson.put(`${base}/fund-account/deal/editReceiverAddress`, pams)
+  return apiJsonToken.put(`${base}/fund-account/deal/editReceiverAddress`, pams)
 };
 
 //提交订单
 export const submitOrder = pams => {
-  return apiJson.post(`${base}/fund-account/deal/submitOrder`, pams)
+  return apiJsonToken.post(`${base}/fund-account/deal/submitOrder`, pams)
 };
 
 //支付方式
 export const paymentMethod = pams => {
-  return api.get(`${base}/fund-account/deal/paymentMethod`, {
+  return apiToken.get(`${base}/fund-account/deal/paymentMethod`, {
     "params": pams
   })
+};
+
+//收藏
+export const collect = pams => {
+  return apiJsonToken.post(`${base}/goods-warehouse/coodsCollect/collect`,pams)
+};
+
+//取消收藏
+export const cancelCollect = pams => {
+  return apiJsonToken.post(`${base}/goods-warehouse/coodsCollect/cancelCollect`,pams)
 };

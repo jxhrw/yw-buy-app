@@ -21,10 +21,37 @@
           <div class="swiper-pagination" slot="pagination"></div>
         </swiper>
       </div>
+      <div class="rush_buy" v-if="pageUrl=='goodsDetRush'">
+        <div class="rb_price">
+          <span class="rb_p1">每日捡漏</span>
+          <span class="rb_p2">抢购价 ￥</span>
+          <span class="rb_p3">1000</span>
+        </div>
+        <div class="rb_time" v-if="countDownShow">
+          <span class="rb_t1">距结束</span>
+          <span class="rb_t2">
+            <i>{{10>countDown.hours?'0':''}}{{countDown.hours}}</i> :
+            <i>{{10>countDown.minutes?'0':''}}{{countDown.minutes}}</i> :
+            <i>{{10>countDown.seconds?'0':''}}{{countDown.seconds}}</i>
+          </span>
+          <mu-icon value="chevron_right" class="rb_t3"></mu-icon>
+        </div>
+      </div>
       <div class="proInfo">
-        <p class="proPrice" v-if="proPrice==-1"><span>登录查看同行价</span></p>
-        <p class="proPrice" v-else><span >￥</span>{{proPrice}}</p>
-        <p class="proName">{{proName}}</p>
+        <div class="proBox">
+          <p class="pro_price" v-if="proPrice==-1">
+            <span>登录查看同行价</span>
+          </p>
+          <p class="pro_price" v-else>
+            <span>￥</span>{{proPrice}}
+            <del>￥12123</del>
+          </p>
+          <p class="pro_name">{{proName}}</p>
+        </div>
+        <div class="collection" @click="collectFuc" v-if="isCollect!=null">
+          <span class="heart_shape" :class="{'selected':isCollect=='1'}"></span>
+          <span>{{isCollect=='1'?'已收藏':'收藏'}}</span>
+        </div>
       </div>
       <div class="proAttr">
         <h6>新旧程度</h6>
@@ -83,13 +110,18 @@
 
 <script>
   import {
-    loadGoodsDetail,
-    askPriceApp
+    loadGoodsDetail, //商品详情
+    loadMyGoodsDetailForShare, //分享后的商品详情
+    loadRushBuyGoodsDetail, //抢购商品详情
+    collect, //收藏
+    cancelCollect, //取消收藏
+    askPriceApp, //询价
   } from '../api/api'
   export default {
     data() {
       return {
-        device:'',//设备
+        device: '', //设备
+        pageUrl: '', //当前页面，存在的值，goodsDetail2：详情app，goodsDetHv：详情h5,
         sctop: false, //滚动到顶部的按钮是否出现
         slides: [], //轮播的banner图
         proName: '', //商品名称
@@ -106,6 +138,13 @@
         newOldLevel: {}, //新旧程度
         goodsStock: 1, //商品库存
         homeGoods: 0, //自家商品，0不是自家，1是自家
+        isCollect: null, //该商品是否收藏，0未收藏，1已收藏，null没有收藏功能
+        countDownShow:false,//倒计时显示
+        countDown: { //倒计时
+          hours: 0,
+          minutes: 0,
+          seconds: 0
+        },
         swiperOption: {
           loop: true,
           pagination: {
@@ -118,7 +157,7 @@
     },
     methods: {
       detailInfo(data) {
-        loadGoodsDetail(data).then(res => {
+        this.dataInterface(data).then(res => {
           let $this = this;
           this.ajaxResult(res, function () {
             $this.shopId = res.data.body.shopId;
@@ -126,7 +165,6 @@
               'https://youwatch.oss-cn-beijing.aliyuncs.com/app/img_default.png'
             ];
             $this.proName = res.data.body.name;
-            $this.proPrice = res.data.body.shopPurchasePrice;
             $this.productAttributeList = res.data.body.productAttributeList;
             $this.shopInfo = res.data.body.shopInfo;
             $this.otherImageUrlList = res.data.body.otherImageUrlList;
@@ -135,11 +173,36 @@
             $this.newOldLevel = res.data.body.newOldLevel;
             $this.goodsStock = res.data.body.goodsStock;
             $this.homeGoods = res.data.body.homeGoods;
+            $this.isCollect = res.data.body.isCollect;
+            if ($this.pageUrl == 'goodsDetail2' || $this.pageUrl == 'goodsDetRush') {
+              $this.proPrice = res.data.body.shopPurchasePrice;
+            }
+            if ($this.pageUrl == 'goodsDetHv') {
+              $this.proPrice = res.data.body.retailPrice || res.data.body.salePrice;
+            }
           });
         }).catch((err) => {
           this.axiosCatch(err, "on");
         });
       },
+      //页面接口
+      dataInterface(data) {
+        let thisPageUrl = this.pageUrl;
+        return new Promise(function (resolve, reject) {
+          if (thisPageUrl == 'goodsDetail2') {
+            resolve(loadGoodsDetail(data));
+          }
+          if (thisPageUrl == 'goodsDetHv') {
+            resolve(loadMyGoodsDetailForShare(data));
+          }
+          if (thisPageUrl == 'goodsDetRush') {
+            resolve(loadRushBuyGoodsDetail(data));
+          }
+        });
+      },
+      //多接口数据统一处理
+      // dataHandle(res) { // let $this = this; // },
+
       //初始化数据
       initData() {
         this.slides = [];
@@ -153,7 +216,7 @@
       },
       //询价
       askPrice(goodsId, shopId) {
-        if (this.device=="iosApp" && this.shopInfo) {
+        if (this.device == "iosApp" && this.shopInfo) {
           this.goTel(this.shopInfo.linkPhone);
           return false;
         }
@@ -176,7 +239,11 @@
       },
       //购买
       toBuy(goodsId, shopId) {
-        this.pagePointBurial('spxqb2b','商品详情页b2b');
+        let thisPageUrl = window.location.href;
+        if (thisPageUrl.indexOf('goodsDetail2') > -1) {
+          this.pagePointBurial('spxqb2b', '商品详情页b2b');
+        }
+
         this.$router.push({
           path: '/orderFirm',
           query: {
@@ -199,7 +266,26 @@
         } else {
           this.sctop = false;
         }
-      }
+      },
+      //收藏和取消收藏
+      collectFuc() {
+        //debugger;
+        if (this.isCollect == 1) {
+          this.isCollect = 0;
+          cancelCollect({
+            "goodsId": this.goodsId
+          }).then(res => {}).catch((err) => {
+            this.axiosCatch(err, "on");
+          });
+        } else {
+          this.isCollect = 1;
+          collect({
+            "goodsId": this.goodsId
+          }).then(res => {}).catch((err) => {
+            this.axiosCatch(err, "on");
+          });
+        }
+      },
     },
     mounted() {
       let device = this.whichDevice();
@@ -210,12 +296,59 @@
       this.$refs.content.addEventListener('scroll', this.handleScroll);
     },
     activated() {
-      this.pagePointBurial('spxqb2b','商品详情页b2b');
+
+      let times = 10;
+      
+      let countDownTime = setInterval(()=>{
+        this.countDown.hours = Math.floor((times+0.5)/(3600));
+        this.countDown.minutes = Math.floor((times+0.5)/(60));
+        this.countDown.seconds = times%(60);
+        this.countDownShow = times>=0;
+        times--;
+        if(times < 0){
+          clearInterval(countDownTime);
+        }
+      },1000);
+
+
+      let thisPageUrl = window.location.href;
+      if (thisPageUrl.indexOf('goodsDetail2') > -1) {
+        this.pageUrl = 'goodsDetail2';
+      } else if (thisPageUrl.indexOf('goodsDetHv') > -1) {
+        this.pageUrl = 'goodsDetHv';
+      } else if (thisPageUrl.indexOf('goodsDetRush') > -1) {
+        this.pageUrl = 'goodsDetRush';
+      }
+
       this.initData();
       let goodsId = this.$route.query.goodsId;
-      this.detailInfo({
-        'goodsId': goodsId
-      });
+      let agentId = this.$route.query.goodsAgentId;
+      let activityId = this.$route.query.activityId;
+      let obj = {};
+      if (this.pageUrl == 'goodsDetail2') {
+        this.pagePointBurial('spxqb2b', '商品详情页b2b');
+        obj = {
+          'goodsId': goodsId
+        }
+      }
+      if (this.pageUrl == 'goodsDetRush') {
+        obj = {
+          'goodsId': goodsId,
+          'activityId': activityId,
+        }
+      }
+      if (this.pageUrl == 'goodsDetHv') {
+        if (agentId) {
+          obj = {
+            'agentId': agentId
+          }
+        } else if (goodsId) {
+          obj = {
+            'goodsId': goodsId
+          }
+        }
+      }
+      this.detailInfo(obj);
     },
     deactivated: function () {
       console.log("我已经离开了！");
@@ -317,20 +450,54 @@
     padding-top: .4rem;
     padding-bottom: .4rem;
     border-bottom: 1px solid #f5f6f6;
+    display: flex;
+    align-items: center;
   }
 
-  .proPrice {
+  .proBox {
+    flex: 1;
+  }
+
+  .collection {
+    width: 0.8rem;
+    margin-left: 0.5rem;
+    position: relative;
+    top: 1px;
+    text-align: center;
+  }
+
+  .heart_shape {
+    display: block;
+    width: 0.46rem;
+    height: 0.37rem;
+    margin: auto;
+    background: #999;
+  }
+
+  .heart_shape.selected {
+    background: linear-gradient(180deg, rgba(251, 100, 85, 1) 0%, rgba(254, 61, 54, 1) 100%);
+  }
+
+
+  .pro_price {
     font-family: DINAlternate-Bold;
     font-size: .36rem;
     color: #fe3d36;
     line-height: .24rem;
   }
 
-  .proPrice span {
+  .pro_price span {
     font-size: .24rem;
   }
 
-  .proName {
+  .pro_price del {
+    font-size: .24rem;
+    font-family: PingFangSC-Regular;
+    font-weight: 400;
+    color: rgba(51, 51, 51, 1);
+  }
+
+  .pro_name {
     font-family: PingFangSC-Medium;
     font-size: .28rem;
     color: #333333;
@@ -422,6 +589,82 @@
 
   .productClass {
     padding: 0.1rem 0.3rem 0 0.3rem;
+  }
+
+  /* 抢购 */
+
+  .rush_buy {
+    width: 100%;
+    height: .70rem;
+    background: rgba(254, 235, 236, 1);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .rb_price {
+    height: 100%;
+    flex: 1;
+    overflow: hidden;
+    background: linear-gradient(44deg, rgba(251, 100, 85, 1) 0%, rgba(254, 61, 54, 1) 100%);
+    display: flex;
+    align-items: center;
+  }
+
+  .rb_p1 {
+    width: 1.38rem;
+    height: .46rem;
+    font-size: .22rem;
+    font-family: PingFangSC-Medium;
+    color: rgba(252, 89, 76, 1);
+    background: #ffffff;
+    text-align: center;
+    line-height: 0.46rem;
+    border-radius: 1rem;
+    margin: 0 0.26rem;
+  }
+
+  .rb_p2 {
+    font-size: .22rem;
+    color: rgba(255, 255, 255, 1);
+  }
+
+  .rb_p3 {
+    font-family: DINAlternate-Bold;
+    font-size: 0.28rem;
+    color: rgba(255, 255, 255, 1);
+  }
+
+  .rb_time {
+    height: 100%;
+    width: 37.86%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .22rem;
+    font-family: PingFangSC-Medium;
+    color: rgba(234, 60, 60, 1);
+  }
+
+  .rb_t2 {
+    margin-left: 0.1rem;
+  }
+
+  .rb_t2 i {
+    display: inline-block;
+    padding: 0 0.02rem;
+    height: .28rem;
+    background: linear-gradient(45deg, rgba(251, 100, 85, 1) 0%, rgba(254, 61, 54, 1) 100%);
+    border-radius: .04rem;
+    color: #ffffff;
+    font-style: normal;
+    text-align: center;
+    line-height: .28rem;
+    font-family: PingFangSC-Semibold;
+  }
+
+  .rb_t3 {
+    font-weight: 100;
+    width: 0.3rem;
   }
 
 </style>

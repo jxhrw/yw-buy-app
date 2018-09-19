@@ -57,6 +57,12 @@ Vue.component('ywLoading', ywLoading);
 Vue.component('scrollToTop', scrollToTop);
 Vue.component('ywBar', ywBar);
 
+//微信分享
+// import wx from 'weixin-js-sdk'
+// import {wxConfig} from './api/api'
+// Vue.prototype.wx = wx;
+// Vue.prototype.wxConfig = wxConfig;
+
 Vue.config.productionTip = false;
 // simple history management
 const history = window.sessionStorage;

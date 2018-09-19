@@ -147,5 +147,14 @@ export default new Router({
         isBack:false,
       }
     },
+    //活动地址0918
+    {
+      path: '/act0918',
+      component: resolve => { return require([ '@/views/activity_0918' ], resolve) },
+      meta: {
+        keepAlive: true,
+        isBack:false,
+      }
+    },
   ]
 })

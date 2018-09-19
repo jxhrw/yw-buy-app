@@ -170,3 +170,15 @@ export const paymentMethod = pams => {
     "params": pams
   })
 };
+
+//活动0918
+export const queryActivitys = pams => {
+  return api.get(`${base}/activityH5Action/queryActivitys.json`, {
+    "params": pams
+  })
+};
+
+//微信分享
+export const wxConfig = pams => {
+  return apiJson.post(`${base}/wx/share/getParamForConfigInterface`, pams)
+};

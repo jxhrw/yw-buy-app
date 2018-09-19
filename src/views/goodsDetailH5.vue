@@ -1,8 +1,8 @@
 <template>
   <div id="goodsDetail">
-    <scrollToTop :scTop="sctop" @click.native="goMyTop()" :style="{'position':'absolute','bottom': '1.5rem','right': '0.5rem'}"></scrollToTop>
+    <scrollToTop :scTop="sctop" @click.native="goMyTop()" :style="{'position':'absolute','bottom': '0.5rem','right': '0.5rem'}"></scrollToTop>
     <ywBar v-if="isApp" type="share" :goodsId="goodsId"></ywBar>
-    <footer>
+    <footer v-if="false">
       <div class="shadow"></div>
       <div class="btnBox">
         <ywBtn :class="{'no':!canClick || homeGoods=='1'}" class="cBtn cBtn-ans" text="询价" @click.native="askPrice(goodsId,shopId)"></ywBtn>
@@ -10,7 +10,7 @@
           @click.native="toBuy(goodsId,shopId)"></ywBtn>
       </div>
     </footer>
-    <div class="content" ref="content">
+    <div class="content" ref="content" :style="{'padding-bottom': '0.2rem'}">
       <div class="banner">
         <div class='swiperImg' v-if="slides.length==1" :style="{'background-image':'url('+slides[0]+')'}"></div>
         <swiper class='swiper' v-if="slides.length>1" :options="swiperOption">
@@ -135,6 +135,16 @@
             $this.newOldLevel = res.data.body.newOldLevel;
             $this.goodsStock = res.data.body.goodsStock;
             $this.homeGoods = res.data.body.homeGoods;
+
+            //微信分享
+            let data = {
+              'title': $this.shopInfo.cnName,
+              'desc': $this.proName,
+              'imgUrl': $this.slides[0],
+              'url': window.location.href
+            };
+            console.log(data);
+            $this.wxShare(data);
           });
         }).catch((err) => {
           this.axiosCatch(err);

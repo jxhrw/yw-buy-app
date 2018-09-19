@@ -84,7 +84,7 @@
         searchTxt: '', //搜索条件的文本
         pageItems: [], //分页内容
         isApp: true, //是否处于有表app里
-        isAppIos:false,//是否iOS app
+        isAppIos: false, //是否iOS app
         btnActive: {
           'price': {
             'chosen': false,
@@ -157,10 +157,20 @@
       //店铺信息
       shopInfoFuc() {
         let $bodyThis = this;
-        let obj = {"shopId":this.$route.query.shopId};
+        let obj = {
+          "shopId": this.$route.query.shopId
+        };
         loadShopInfo(obj).then(res => {
           this.ajaxResult(res, function () {
             $bodyThis.shopInfoTxt = res.data.body;
+
+            //微信分享
+            let data = {
+              'title': $bodyThis.shopInfoTxt.cnName,
+              'desc': $bodyThis.shopInfoTxt.address,
+              'imgUrl': $bodyThis.shopInfoTxt.fullLogoUrl
+            };
+            $bodyThis.wxShare(data);
           })
         }).catch((err) => {
           this.axiosCatch(err, 'on');
@@ -273,9 +283,9 @@
       },
       //分享网页
       shareUrl(shopInfo) {
-        this.pagePointBurial('wdmd_zdfx','我的门店中整店分享');
+        this.pagePointBurial('wdmd_zdfx', '我的门店中整店分享');
         let device = this.whichDevice();
-        let url = window.location.href.split("#/")[0] + "#/shopHv?shopId="+shopInfo.id;
+        let url = window.location.href.split("#/")[0] + "#/shopHv?shopId=" + shopInfo.id;
         if (device == "androidApp") {
           window.Android.getShareContent(shopInfo.cnName, url, shopInfo.address, shopInfo.fullLogoUrl);
         } else if (device == "iosApp") {
@@ -304,12 +314,12 @@
       if (device != "androidApp" && device != "iosApp") {
         this.isApp = false;
       }
-      if(device == "iosApp"){
+      if (device == "iosApp") {
         this.isAppIos = true;
       }
     },
     activated() {
-      this.pagePointBurial('wdmd','我的门店');
+      this.pagePointBurial('wdmd', '我的门店');
       let scrollTop = 0;
       let shopInfoCH = document.getElementById("shopInfo").offsetTop;
       let topBarHeight = document.getElementById("top-bar").clientHeight;

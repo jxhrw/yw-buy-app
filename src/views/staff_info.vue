@@ -4,13 +4,13 @@
     <footer>
       <div class="shadow"></div>
       <div class="btnBox">
-        <ywBtn text="启用" class="btn_footer_staff no" @click.native="enableFuc"></ywBtn>
-        <ywBtn text="删除" class="btn_footer_staff" @click.native="deleteFuc"></ywBtn>
-        <ywBtn text="编辑" class="btn_footer_staff" @click.native="editFuc"></ywBtn>
+        <ywBtn :text="userEnable=='1'?'禁用':'启用'" :class="['btn_footer_staff', canClick?'':'no']" @click.native="enableFuc"></ywBtn>
+        <!-- <ywBtn text="删除" class="btn_footer_staff" @click.native="deleteFuc"></ywBtn> -->
+        <ywBtn text="编辑" :class="['btn_footer_staff', canClick?'':'no']" @click.native="editFuc"></ywBtn>
       </div>
     </footer>
     <div class="content">
-      <ul class="myInfo">
+      <ul class="myInfo" v-if='loadingFinish'>
         <li>
           <p>{{staffInfo.nickName}}</p>
         </li>
@@ -27,32 +27,34 @@
 
 <script>
   import {
-    listReceiverAddress,
+    loadShopUser,
+    startOrStopUse
   } from '../api/api'
   export default {
     data() {
       return {
         canClick: true, //按钮是否可点击
+        userEnable:'1',//0禁用，1启用
         staffInfo: { //员工信息
-          nickName: '蛋壳',
-          job: '大神带你',
-          mobile: '124124124',
+          nickName: '',
+          job: '',
+          mobile: '',
         },
         loadingFinish: false, //数据请求完成
       }
     },
     methods: {
-      //地址信息
-      getAddressInfo() {
-        listReceiverAddress().then(res => {
+      //查询店铺员工
+      getShopUser(data) {
+        this.loadingFinish = false;
+        loadShopUser(data).then(res => {
           let $this = this;
+          this.loadingFinish = true;
           this.ajaxResult(res, function () {
-            $this.addressList = res.data.body;
-            if (res.data.body.length == 1) {
-              sessionStorage.setItem("addressId", res.data.body[0].id);
-            } else {
-              sessionStorage.setItem("addressId", '');
-            }
+            $this.staffInfo.nickName = res.data.body.userInfoVO.nickname || '—';
+            $this.staffInfo.job = res.data.body.roleShow || '—';
+            $this.staffInfo.mobile = res.data.body.userInfoVO.phone || '—';
+            $this.userEnable = res.data.body.userVO.userEnable;
           });
         }).catch((err) => {
           this.axiosCatch(err);
@@ -64,25 +66,53 @@
       },
       //启用
       enableFuc() {
-        this.isChange = true;
+        let isUserEnable = this.userEnable=='1'?'0':'1';
+        let obj = {'id':this.$route.query.id,'userEnable':isUserEnable}
+        this.canClick = false;
+        startOrStopUse(obj).then(res => {
+          let $this = this;
+          $this.canClick = true;
+          this.ajaxResult(res, function () {
+             $this.userEnable = isUserEnable;
+          });
+        }).catch((err) => {
+          this.canClick = true;
+          this.axiosCatch(err);
+        });
       },
       //删除
       deleteFuc() {
-        this.isChange = true;
+        // this.isChange = true;
       },
       //编辑
       editFuc() {
         this.$router.push({
           path: '/staffEdit',
-          query:{'id':1}
+          query: {
+            'id': this.$route.query.id
+          }
         });
+      },
+      //页面数据初始化
+      dataInit() {
+        this.canClick = true;
+        this.userEnable = '1';
+        this.staffInfo = {
+          nickName: '',
+          job: '',
+          mobile: '',
+        };
+        this.loadingFinish = false;
       },
     },
     mounted() {
 
     },
     activated() {
-      //   this.getAddressInfo();
+      this.dataInit();
+      this.getShopUser({
+        'id': this.$route.query.id
+      });
     },
   };
 
@@ -156,7 +186,8 @@
   .btn_footer_staff:last-child {
     margin-right: 0;
   }
-  .btn_footer_staff.no{
+
+  .btn_footer_staff.no {
     pointer-events: none;
     opacity: 0.2;
   }

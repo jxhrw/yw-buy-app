@@ -1,6 +1,10 @@
 import {
   Toast
 } from 'mint-ui';
+import wx from 'weixin-js-sdk'
+import {
+  wxConfig
+} from '../api/api';
 
 export default (Vue) => {
   Vue.prototype.objToStr = function (param, key, encode) {
@@ -123,7 +127,7 @@ export default (Vue) => {
       this.toast('该商品库存不足');
     } else if (!status && message) {
       this.toast(`${message}`);
-    } else if (message && message.length < 10) {
+    } else if (message && message.length < 20) {
       this.toast(`${message}`);
     } else {
       this.toast(`HTTP ${status}`);
@@ -146,4 +150,49 @@ export default (Vue) => {
       } catch (err) {}
     }
   }
+
+  //微信分享
+  Vue.prototype.wxShare = function (obj) {
+    obj.url = obj.url || window.location.href;
+    wxConfig({
+      'url': obj.url.split('#')[0]
+    }).then(res => {
+      wx.config({
+        debug: false,
+        appId: res.data.body.appId, // 必填，公众号的唯一标识
+        timestamp: res.data.body.timestamp, // 必填，生成签名的时间戳
+        nonceStr: res.data.body.nonceStr, // 必填，生成签名的随机串
+        signature: res.data.body.signature, // 必填，签名
+        jsApiList: ['onMenuShareTimeline', 'onMenuShareAppMessage']
+      });
+      wx.ready(function () {
+        //分享到朋友圈
+        wx.onMenuShareTimeline({
+          title: obj.title, // 分享标题
+          link: obj.url, 
+          imgUrl: obj.imgUrl, // 分享图标
+          success: function () {
+            // 用户点击了分享后执行的回调函数
+          },
+        });
+        wx.onMenuShareAppMessage({
+          title: obj.title, // 分享标题
+          desc: obj.desc, // 分享描述
+          link: obj.url, 
+          imgUrl: obj.imgUrl, // 分享图标
+          type: '', // 分享类型,music、video或link，不填默认为link
+          dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+          success: function () {
+            // 用户点击了分享后执行的回调函数
+          }
+        });
+      });
+      wx.error(function (res) {
+
+      });
+    });
+  }
+
+
+
 };

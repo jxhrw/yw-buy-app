@@ -1,15 +1,26 @@
 <template>
   <div id="goodsDetail">
-    <scrollToTop :scTop="sctop" @click.native="goMyTop()" :style="{'position':'absolute','bottom': '1.5rem','right': '0.5rem'}"></scrollToTop>
+    <scrollToTop :scTop="sctop" @click.native="goMyTop()" :style="{'position':'absolute','bottom': power>=0?'1.5rem':'0.5rem','right': '0.5rem'}"></scrollToTop>
     <ywBar v-if="isApp" type="share" :goodsId="goodsId" :shareBtnShow="false"></ywBar>
-    <footer>
+    <footer v-if="power>=0">
       <div class="shadow"></div>
       <div class="btnBox">
-        <ywBtn :class="{'no':!canClick || homeGoods=='1'||proPrice==-1}" class="cBtn cBtn-ans" text="询价" @click.native="askPrice(goodsId,shopId)"></ywBtn>
-        <ywBtn :class="{'no':!canClick || homeGoods=='1'||proPrice==-1 || goodsStock<1}" class="cBtn cBtn-buy" :text="goodsStock<1?'已售罄':'立即购买'"
-          @click.native="toBuy(goodsId,shopId)"></ywBtn>
+        <template v-if="power==0">
+          <ywBtn :class="{'no':!canClick || homeGoods=='1'||proPrice==-1}" class="cBtn cBtn-ans" text="询价" @click.native="askPrice(goodsId,shopId)"></ywBtn>
+          <ywBtn :class="{'no':!canClick || homeGoods=='1'||proPrice==-1 || goodsStock<1}" class="cBtn cBtn-buy" :text="goodsStock<1?'已售罄':'立即购买'"
+            @click.native="toBuy(goodsId,shopId)"></ywBtn>
+        </template>
+        <template v-if="power==1">
+          <ywBtn :class="{'no':!canClick || homeGoods=='1'||proPrice==-1}" class="cBtn cBtn-ans radius" text="询价" @click.native="askPrice(goodsId,shopId)"></ywBtn>
+        </template>
+        <template v-if="power==2">
+          <ywBtn :class="{'no':!canClick || homeGoods=='1'||proPrice==-1 || goodsStock<1}" class="cBtn cBtn-buy radius" :text="goodsStock<1?'已售罄':'立即购买'"
+            @click.native="toBuy(goodsId,shopId)"></ywBtn>
+        </template>
+
       </div>
     </footer>
+
     <div class="content" ref="content">
       <div class="banner">
         <div class='swiperImg' v-if="slides.length==1" :style="{'background-image':'url('+slides[0]+')'}"></div>
@@ -24,17 +35,17 @@
       <div class="rush_buy" v-if="pageUrl=='goodsDetRush'">
         <div class="rb_price">
           <span class="rb_p1">每日捡漏</span>
-          <span class="rb_p2">抢购价 ￥</span>
-          <span class="rb_p3">1000</span>
+          <span class="rb_p2" v-if="rushBuyStatus">{{rushBuyStatus=='1'?'抢购结束':(rushBuyStatus=='2'?'抢购中':'抢购价 ￥')}}</span>
+          <span class="rb_p3" v-if="rushBuyStatus=='3'||rushBuyStatus=='4'">{{rushBuyGoodsItemVO.grabPrice}}</span>
         </div>
         <div class="rb_time" v-if="countDownShow">
-          <span class="rb_t1">距结束</span>
+          <span class="rb_t1">{{rushBuyStatus=='3'||rushBuyStatus=='4'?'距开始':'距结束'}}</span>
           <span class="rb_t2">
             <i>{{10>countDown.hours?'0':''}}{{countDown.hours}}</i> :
             <i>{{10>countDown.minutes?'0':''}}{{countDown.minutes}}</i> :
             <i>{{10>countDown.seconds?'0':''}}{{countDown.seconds}}</i>
           </span>
-          <mu-icon value="chevron_right" class="rb_t3"></mu-icon>
+          <span class="rb_t3"></span>
         </div>
       </div>
       <div class="proInfo">
@@ -43,12 +54,12 @@
             <span>登录查看同行价</span>
           </p>
           <p class="pro_price" v-else>
-            <span>￥</span>{{proPrice}}
-            <del>￥12123</del>
+            <span v-if='proPrice'>￥</span>{{proPrice}}
+            <del v-if="retailPrice">￥{{retailPrice}}</del>
           </p>
           <p class="pro_name">{{proName}}</p>
         </div>
-        <div class="collection" @click="collectFuc" v-if="isCollect!=null">
+        <div class="collection" @click="collectFuc" v-if="pageUrl!='goodsDetHv' && isCollect!=null">
           <span class="heart_shape" :class="{'selected':isCollect=='1'}"></span>
           <span>{{isCollect=='1'?'已收藏':'收藏'}}</span>
         </div>
@@ -121,11 +132,14 @@
     data() {
       return {
         device: '', //设备
-        pageUrl: '', //当前页面，存在的值，goodsDetail2：详情app，goodsDetHv：详情h5,
+        pageUrl: '', //当前页面，存在的值，goodsDetail2：详情app，goodsDetHv：详情h5,goodsDetRush：详情抢购
         sctop: false, //滚动到顶部的按钮是否出现
         slides: [], //轮播的banner图
         proName: '', //商品名称
         proPrice: '', //商品价格,sall代理价，shopPurchase平台采购价，retail零售价
+        retailPrice: '', //抢购价格的原先价格
+        rushBuyGoodsItemVO: {}, //抢购信息
+        rushBuyStatus: '', //抢购状态
         productAttributeList: [], //商品属性
         shopInfo: {}, //商家信息
         // baseInfo: {}, //基本信息
@@ -139,7 +153,8 @@
         goodsStock: 1, //商品库存
         homeGoods: 0, //自家商品，0不是自家，1是自家
         isCollect: null, //该商品是否收藏，0未收藏，1已收藏，null没有收藏功能
-        countDownShow:false,//倒计时显示
+        power: 0, //权限，-1都隐藏，0都出现，1询价单个出现，2购买单个出现
+        countDownShow: true, //倒计时显示
         countDown: { //倒计时
           hours: 0,
           minutes: 0,
@@ -174,16 +189,64 @@
             $this.goodsStock = res.data.body.goodsStock;
             $this.homeGoods = res.data.body.homeGoods;
             $this.isCollect = res.data.body.isCollect;
-            if ($this.pageUrl == 'goodsDetail2' || $this.pageUrl == 'goodsDetRush') {
+            $this.rushBuyGoodsItemVO = res.data.body.rushBuyGoodsItemVO;
+            if ($this.pageUrl == 'goodsDetail2') {
               $this.proPrice = res.data.body.shopPurchasePrice;
             }
             if ($this.pageUrl == 'goodsDetHv') {
               $this.proPrice = res.data.body.retailPrice || res.data.body.salePrice;
             }
+            if ($this.pageUrl == 'goodsDetRush') {
+              $this.rushBuyStatus = $this.rushBuyGoodsItemVO.activityStatus;
+              $this.postRushBuyStatus($this.rushBuyStatus);
+            }
+
+            //微信分享
+            let data = {
+              'title': $this.shopInfo && $this.shopInfo.cnName ? '$this.shopInfo.cnName' : '有表',
+              'desc': $this.proName,
+              'imgUrl': $this.slides[0],
+            };
+            // console.log(data);
+            $this.wxShare(data);
           });
         }).catch((err) => {
           this.axiosCatch(err, "on");
         });
+      },
+      //抢购状态
+      postRushBuyStatus(status) {
+        if (status == '1') {
+          this.countDownShow = false;
+          this.proPrice = this.rushBuyGoodsItemVO.retailPrice;
+        }
+        if (status == '2') {
+          this.proPrice = this.rushBuyGoodsItemVO.grabPrice;
+          this.retailPrice = this.rushBuyGoodsItemVO.retailPrice;
+          this.countDownFuc(status, this.rushBuyGoodsItemVO.activityEndTime);
+        }
+        if (status == '3' || status == '4') {
+          this.proPrice = this.rushBuyGoodsItemVO.retailPrice;
+          this.countDownFuc(status, this.rushBuyGoodsItemVO.grabStartTime);
+        }
+      },
+      //倒计时
+      countDownFuc(status, timeStamp) {
+        let nowTimes = new Date().getTime();
+        let endTime = parseInt(timeStamp);
+        let times = nowTimes > endTime ? 0 : parseInt((endTime - nowTimes) / 1000);
+        let countDownTime = setInterval(() => {
+          this.countDown.hours = Math.floor((times + 0.5) / (3600));
+          this.countDown.minutes = Math.floor((times + 0.5) / (60)) % 60;
+          this.countDown.seconds = times % (60);
+          this.countDownShow = times >= 0;
+          times--;
+          if (times < 0) {
+            clearInterval(countDownTime);
+            status = status == '3' || status == '4' ? '2' : '1';
+            this.postRushBuyStatus(status);
+          }
+        }, 1000);
       },
       //页面接口
       dataInterface(data) {
@@ -204,22 +267,38 @@
       // dataHandle(res) { // let $this = this; // },
 
       //初始化数据
-      initData() {
+      dataInit() {
+        this.device = '';
+        this.pageUrl = '';
+        this.sctop = false;
         this.slides = [];
         this.proName = '';
         this.proPrice = '';
+        this.retailPrice = '';
+        this.rushBuyGoodsItemVO = {};
+        this.rushBuyStatus = '';
         this.productAttributeList = [];
         this.shopInfo = {};
         // this.baseInfo = {};
         this.otherImageUrlList = [];
-        this.sctop = false;
+        this.goodsId = 0;
+        this.shopId = 0;
+        this.isApp = true;
+        this.canClick = true;
+        this.productDesc = '';
+        this.newOldLevel = {};
+        this.goodsStock = 1;
+        this.homeGoods = 0;
+        this.isCollect = null;
+        this.power = 0;
+        this.countDownShow = true;
       },
       //询价
       askPrice(goodsId, shopId) {
-        if (this.device == "iosApp" && this.shopInfo) {
-          this.goTel(this.shopInfo.linkPhone);
-          return false;
-        }
+        // if (this.device=="iosApp" && this.shopInfo) {
+        //   this.goTel(this.shopInfo.linkPhone);
+        //   return false;
+        // }
         this.canClick = false;
         askPriceApp({
           "targetShopId": shopId,
@@ -286,8 +365,21 @@
           });
         }
       },
+      //JS接收OC传值的代码
+      payResult(obj) {
+        this.$alert('测试：' + JSON.stringify(obj));
+        if (obj.ask - price && obj.goods - buy) {
+          this.power = 0;
+        } else if (obj.ask - price) {
+          this.power = 1;
+        } else if (obj.goods - buy) {
+          this.power = 2;
+        }
+      }
     },
     mounted() {
+      window.payResult = this.payResult;
+
       let device = this.whichDevice();
       this.device = device;
       if (device != "androidApp" && device != "iosApp") {
@@ -296,20 +388,7 @@
       this.$refs.content.addEventListener('scroll', this.handleScroll);
     },
     activated() {
-
-      let times = 10;
-      
-      let countDownTime = setInterval(()=>{
-        this.countDown.hours = Math.floor((times+0.5)/(3600));
-        this.countDown.minutes = Math.floor((times+0.5)/(60));
-        this.countDown.seconds = times%(60);
-        this.countDownShow = times>=0;
-        times--;
-        if(times < 0){
-          clearInterval(countDownTime);
-        }
-      },1000);
-
+      this.dataInit();
 
       let thisPageUrl = window.location.href;
       if (thisPageUrl.indexOf('goodsDetail2') > -1) {
@@ -320,7 +399,6 @@
         this.pageUrl = 'goodsDetRush';
       }
 
-      this.initData();
       let goodsId = this.$route.query.goodsId;
       let agentId = this.$route.query.goodsAgentId;
       let activityId = this.$route.query.activityId;
@@ -349,6 +427,7 @@
         }
       }
       this.detailInfo(obj);
+
     },
     deactivated: function () {
       console.log("我已经离开了！");
@@ -366,6 +445,10 @@
   .cBtn.no {
     pointer-events: none;
     opacity: 0.2;
+  }
+
+  .cBtn.radius {
+    border-radius: 1rem !important;
   }
 
   .cBtn-ans {
@@ -468,14 +551,14 @@
 
   .heart_shape {
     display: block;
-    width: 0.46rem;
+    width: 0.47rem;
     height: 0.37rem;
     margin: auto;
-    background: #999;
+    background: url('https://youwatch.oss-cn-beijing.aliyuncs.com/app%2Ficon_collectionNo.png') no-repeat center/100% 100%;
   }
 
   .heart_shape.selected {
-    background: linear-gradient(180deg, rgba(251, 100, 85, 1) 0%, rgba(254, 61, 54, 1) 100%);
+    background-image: url('https://youwatch.oss-cn-beijing.aliyuncs.com/app%2Ficon_collection.png');
   }
 
 
@@ -580,7 +663,7 @@
 
   footer .btnBox button {
     background-image: linear-gradient(-57deg, #fb6455 10%, #fe3d36 100%);
-    border-radius: 40px;
+    border-radius: 1rem;
     width: 1.80rem;
     height: .6rem;
     line-height: 0.6rem;
@@ -665,6 +748,9 @@
   .rb_t3 {
     font-weight: 100;
     width: 0.3rem;
+    height: 0.32rem;
+    margin-left: 0.05rem;
+    background: url('https://youwatch.oss-cn-beijing.aliyuncs.com/app%2Farrow_right_red.png') no-repeat center/0.12rem;
   }
 
 </style>

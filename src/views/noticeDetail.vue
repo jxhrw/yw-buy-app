@@ -29,7 +29,7 @@
           this.axiosCatch(err,'on');
         });
       },
-      initData() {
+      dataInit() {
         this.info = {};
       }
     },
@@ -37,7 +37,7 @@
 
     },
     activated() {
-      this.initData();
+      this.dataInit();
       let afficheId = this.$route.query.id;
       this.detailInfo({
         'afficheId': afficheId

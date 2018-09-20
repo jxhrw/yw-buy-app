@@ -54,6 +54,14 @@ export const queryMyGoodsPageForShare = pams => {
   });
 };
 
+//查询商品信息
+export const loadGoodsInfo = pams => {
+  return apiToken.get(`${base}/goods-warehouse/goodsShow/loadGoodsInfo`, {
+    "params": pams
+  })
+};
+
+
 //商品详情
 export const loadGoodsDetail = pams => {
   return apiToken.get(`${base}/goods-warehouse/goodsShow/loadGoodsDetail`, {
@@ -178,6 +186,18 @@ export const paymentMethod = pams => {
   })
 };
 
+//活动0918
+export const queryActivitys = pams => {
+  return apiToken.get(`${base}/activityH5Action/queryActivitys.json`, {
+    "params": pams
+  })
+};
+
+//微信分享
+export const wxConfig = pams => {
+  return apiJsonToken.post(`${base}/wx/share/getParamForConfigInterface`, pams)
+};
+
 //收藏
 export const collect = pams => {
   return apiJsonToken.post(`${base}/goods-warehouse/coodsCollect/collect`,pams)
@@ -186,4 +206,28 @@ export const collect = pams => {
 //取消收藏
 export const cancelCollect = pams => {
   return apiJsonToken.post(`${base}/goods-warehouse/coodsCollect/cancelCollect`,pams)
+}
+
+//分页查询员工列表
+export const shopUserQueryPage = pams => {
+  return apiToken.get(`${base}/user-center/shopUser/queryPage`, {
+    "params": pams
+  })
+};
+
+//查询店铺员工
+export const loadShopUser = pams => {
+  return apiToken.get(`${base}/user-center/shopUser/loadShopUser`, {
+    "params": pams
+  })
+};
+
+//新增或修改员工
+export const addOrModifyShopUser = pams => {
+  return apiJsonToken.post(`${base}/user-center/shopUser/addOrModifyShopUser`,pams)
+};
+
+//启用或禁用员工
+export const startOrStopUse = pams => {
+  return apiJsonToken.post(`${base}/user-center/shopUser/startOrStopUse`,pams)
 };

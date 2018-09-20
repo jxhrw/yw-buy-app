@@ -73,7 +73,7 @@
           this.axiosCatch(err);
         });
       },
-      initData() {
+      dataInit() {
         this.proList = [];
         this.isOpen = [];
         this.isDrop = [];
@@ -105,7 +105,7 @@
 
     },
     activated() {
-      this.initData();
+      this.dataInit();
       this.problemInfo();
     },
   };

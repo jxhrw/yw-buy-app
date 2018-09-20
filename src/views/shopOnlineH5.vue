@@ -104,7 +104,7 @@
         refreshing: false, //下拉loading
         loading: false, //底部loading
         requesting: true, //整体loading
-        topShow:false,//搜索是否有背景图
+        topShow: false, //搜索是否有背景图
       }
     },
     components: {},
@@ -157,10 +157,20 @@
       //店铺信息
       shopInfoFuc() {
         let $bodyThis = this;
-        let obj = {"shopId":this.$route.query.shopId};
+        let obj = {
+          "shopId": this.$route.query.shopId
+        };
         loadShopInfoForShare(obj).then(res => {
           this.ajaxResult(res, function () {
             $bodyThis.shopInfoTxt = res.data.body;
+
+            //微信分享
+            let data = {
+              'title': $bodyThis.shopInfoTxt.cnName,
+              'desc': $bodyThis.shopInfoTxt.address,
+              'imgUrl': $bodyThis.shopInfoTxt.fullLogoUrl
+            };
+            $bodyThis.wxShare(data);
           })
         }).catch((err) => {
           this.axiosCatch(err, 'on');
@@ -276,7 +286,7 @@
       //分享网页
       shareUrl(shopInfo) {
         let device = this.whichDevice();
-        let url = window.location.href.split("#/")[0] + "#/shopHv?shopId="+shopInfo.id;
+        let url = window.location.href.split("#/")[0] + "#/shopHv?shopId=" + shopInfo.id;
         if (device == "androidApp") {
           window.Android.getShareContent(shopInfo.cnName, url, shopInfo.address, shopInfo.fullLogoUrl);
         } else if (device == "iosApp") {
@@ -430,6 +440,7 @@
     width: 100%;
     z-index: 5;
   }
+
   .top-bar.show {
     background: url("../assets/imgs/bg_shopOnline.png") no-repeat bottom/cover;
   }

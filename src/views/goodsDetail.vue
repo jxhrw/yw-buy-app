@@ -164,7 +164,7 @@
         });
       },
       //初始化数据
-      initData() {
+      dataInit() {
         this.slides = [];
         this.proName = '';
         this.proPrice = '';
@@ -221,7 +221,7 @@
     },
     activated() {
       this.pagePointBurial('spxq','商品详情页b2c');
-      this.initData();
+      this.dataInit();
       let goodsId = this.$route.query.goodsAgentId;
       this.detailInfo({
         'agentId': goodsId

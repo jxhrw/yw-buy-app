@@ -1,8 +1,8 @@
 <template>
   <div id="staff_add">
-    <ywBar :title="'基础信息'" type="white"></ywBar>
+    <ywBar :title="'基础信息'" type="white" :backFuc="sureBack" :hasBackFuc="true"></ywBar>
     <div class="content">
-      <ul class="myInfo">
+      <ul class="myInfo" v-if='loadingFinish'>
         <li>
           <input type="text" placeholder="昵称" v-model="staffInfo.nickName" v-on:input="changeFuc">
         </li>
@@ -13,17 +13,17 @@
         <li>
           <input type="text" placeholder="手机号" v-model="staffInfo.mobile" v-on:input="changeFuc">
         </li>
-        <li>
+        <li v-if="pageUrl == 'staffAdd'">
           <input type="text" placeholder="密码" v-model="staffInfo.password" v-on:input="changeFuc">
         </li>
-        <li>
+        <li v-if="pageUrl == 'staffAdd'">
           <input type="text" placeholder="确认密码" v-model="staffInfo.passwordAgain" v-on:input="changeFuc">
         </li>
       </ul>
-      <ywBtn text="确认新增" class="addSure" @click.native="addSureFuc"></ywBtn>
+      <ywBtn :text="pageUrl == 'staffAdd'?'确认新增':'保存'" :class="['addSure',canClick?'':'no']" @click.native="addSureFuc"></ywBtn>
     </div>
 
-    <div class="popupBox" v-show="popupShow" @click="popupShow=!popupShow">
+    <div class="popupBox" v-if="popupShow" @click="popupShow=!popupShow">
       <footer class="flexEnd" @click="stop">
         <mu-icon value="clear" class="iconBtn" @click="popupShow=!popupShow"></mu-icon>
         <h3>选择职务</h3>
@@ -38,7 +38,9 @@
 
 <script>
   import {
-    listReceiverAddress,
+    loadShopUser,
+    addOrModifyShopUser,
+    queryDic
   } from '../api/api'
   export default {
     data() {
@@ -46,6 +48,8 @@
         isChange: false, //是否修改
         canClick: true, //按钮是否可点击
         popupShow: false, //弹窗是否显示
+        pageUrl: '', //页面地址
+        loadingFinish: false, //数据请求完成
         staffInfo: { //员工信息
           nickName: '',
           job: [],
@@ -53,37 +57,50 @@
           password: '',
           passwordAgain: '',
         },
-        loadingFinish: false, //数据请求完成
-        sendList: [{
-            code: '1',
-            name: '店员'
-          },
-          {
-            code: '2',
-            name: '店涨'
-          },
-        ],
+        allListCode: [], //所有allListSlots.values对应的code
         //多选的列表值
         allListSlots: [{
           width: '100%',
           textAlign: 'center',
-          values: ['店员', '店涨']
+          values: []
         }],
       }
     },
     methods: {
-      //地址信息
-      getAddressInfo() {
-        listReceiverAddress().then(res => {
+      //查询店铺员工
+      getShopUser(data) {
+        this.loadingFinish = false;
+        loadShopUser(data).then(res => {
           let $this = this;
+          this.loadingFinish = true;
           this.ajaxResult(res, function () {
-            $this.addressList = res.data.body;
-            if (res.data.body.length == 1) {
-              sessionStorage.setItem("addressId", res.data.body[0].id);
-            } else {
-              sessionStorage.setItem("addressId", '');
-            }
+            $this.staffInfo.nickName = res.data.body.userInfoVO.nickname || '';
+            $this.staffInfo.job = [res.data.body.roleShow || ''];
+            $this.staffInfo.mobile = res.data.body.userInfoVO.phone || '';
           });
+        }).catch((err) => {
+          this.axiosCatch(err);
+        });
+      },
+      //职务列表
+      getRoleList(data) {
+        if (this.pageUrl == 'staffAdd') {
+          this.loadingFinish = true;
+        } else {
+          this.getShopUser({
+            'id': this.$route.query.id
+          });
+        }
+        queryDic(data).then(res => {
+          this.allListCode = [];
+          // this.allListSlots[0].values = [];
+          let $this = this;
+          let arr = [];
+          res.data.body.forEach(function (c) {
+            $this.allListCode.push(c.code);
+            arr.push(c.name);
+          });
+          $this.allListSlots[0].values = arr;
         }).catch((err) => {
           this.axiosCatch(err);
         });
@@ -96,31 +113,137 @@
       openAndChoose() {
         this.popupShow = !this.popupShow;
         let value = this.allListSlots[0].values[0];
-        this.staffInfo.job = [value];
+        this.staffInfo.job = this.staffInfo.job.length >= 1 ? this.staffInfo.job : [value];
       },
       //改变选中后触发
       selectChange(value, index) {
         this.changeFuc();
         switch (index) {
           case 0:
-            // this.staffInfo.job[0] = value;
             this.staffInfo.job = [value];
             break;
         }
       },
-      //新增员工
-      addSureFuc(){
-          window.history.back();
+      //新增/修改员工信息
+      addSureFuc() {
+        if ((this.pageUrl == 'staffAdd' && (!this.staffInfo.nickName || !this.staffInfo.job[0] || !this.staffInfo.mobile ||
+            !this.staffInfo.password || !
+            this.staffInfo.passwordAgain)) || (this.pageUrl == 'staffEdit' && (!this.staffInfo.nickName || !this.staffInfo
+            .job[0] || !this.staffInfo.mobile))) {
+          this.$alert({
+            title: '',
+            content: '信息不完整',
+            btnText: '',
+          });
+          return false;
+        }
+        let myreg = /^[1][3,4,5,6,7,8,9][0-9]{9}$/;
+        if (!myreg.test(this.staffInfo.mobile)) {
+          this.$alert({
+            title: '',
+            content: '手机号格式有误',
+            btnText: '',
+          });
+          return false;
+        }
+        if (this.staffInfo.password != this.staffInfo.passwordAgain) {
+          this.$alert({
+            title: '',
+            content: '密码不一致',
+            btnText: '',
+          });
+          return false;
+        }
+        let obj = {};
+        obj.nickName = this.staffInfo.nickName;
+        obj.role = this.allListCode[this.allListSlots[0].values.indexOf(this.staffInfo.job[0])];
+        obj.mobile = this.staffInfo.mobile;
+        if (this.pageUrl == 'staffAdd') {
+          obj.password = this.staffInfo.password;
+          obj.passwordAgain = this.staffInfo.passwordAgain;
+        } else {
+          obj.id = this.$route.query.id;
+        }
+        // console.log(obj);
+        this.canClick = false;
+        addOrModifyShopUser(obj).then(res => {
+          let $this = this;
+          this.canClick = true;
+          this.ajaxResult(res, function () {
+            window.history.back();
+          });
+        }).catch((err) => {
+          this.canClick = true;
+          this.axiosCatch(err);
+        });
       },
       //阻止冒泡
       stop(event) {
         event.stopPropagation();
+      },
+      //数据初始化
+      dataInit() {
+        this.isChange = false; //是否修改
+        this.canClick = true; //按钮是否可点击
+        this.popupShow = false; //弹窗是否显示
+        this.loadingFinish = false;
+        this.staffInfo = { //员工信息
+          nickName: '',
+          job: [],
+          mobile: '',
+          password: '',
+          passwordAgain: '',
+        };
+      },
+      //返回执行
+      sureBack() {
+        if (this.isChange) {
+          this.$confirm({
+            title: '',
+            content: '退出后将丢失您当前编辑的信息，是否退出？',
+            yesText: "退出",
+            noText: '取消'
+          }).then(res => {
+            this.toBack();
+          }).catch(err => {});
+        } else {
+          this.toBack();
+        }
+      },
+      //返回
+      toBack() {
+        let device = this.whichDevice();
+        let index = JSON.parse(window.sessionStorage.getItem("pageIndex"));
+        //from是上一页，to是当前页
+        if ((index.to == null && index.from == null) || (index.to == 1 && index.from > index.to)) {
+          if (device == "androidApp") {
+            window.Android.finish();
+          } else if (device == "iosApp") {
+            //ActionName：原生中对应的方法名；parameter：回传的参数
+            // window.webkit.messageHandlers.ActionName.postMessage('parameter');
+            window.webkit.messageHandlers.finish.postMessage('');
+          } else {
+            window.history.back();
+          }
+        } else {
+          window.history.back();
+        }
       },
     },
     mounted() {
 
     },
     activated() {
+      let thisPageUrl = window.location.href;
+      if (thisPageUrl.indexOf('staffAdd') > -1) {
+        this.pageUrl = 'staffAdd';
+      } else if (thisPageUrl.indexOf('staffEdit') > -1) {
+        this.pageUrl = 'staffEdit';
+      }
+      this.dataInit();
+      this.getRoleList({
+        'type': 'shop_user_type'
+      });
       //   this.getAddressInfo();
     },
   };
@@ -195,6 +318,10 @@
     color: #ffffff;
     margin: auto;
     margin-top: 1.2rem;
+  }
+  .addSure.no{
+    pointer-events: none;
+    opacity: 0.2;
   }
 
   /* 弹窗 */

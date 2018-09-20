@@ -38,9 +38,41 @@
       <div class="proAttr">
         <h6>商品属性</h6>
         <ul>
-          <li v-for='(item,index) in productAttributeList' :key="index">
-            <div class="left">{{item.title}}</div>
-            <div class="right">{{item.itemValueShow || '—'}}</div>
+          <li>
+            <div class="left">机芯类型</div>
+            <div class="right">{{propsName.jixinleixing || '—'}}</div>
+          </li>
+          <li>
+            <div class="left">表壳材质</div>
+            <div class="right">{{propsName.watch_metal || '—'}}</div>
+          </li>
+          <li>
+            <div class="left">表带材质</div>
+            <div class="right">{{propsName.dai_metal || '—'}}</div>
+          </li>
+          <li>
+            <div class="left">表盘形状</div>
+            <div class="right">{{propsName.pan_xingzhuang || '—'}}</div>
+          </li>
+          <li>
+            <div class="left">表盘颜色</div>
+            <div class="right">{{propsName.dial_color || '—'}}</div>
+          </li>
+          <li>
+            <div class="left">复杂功能</div>
+            <div class="right">{{propsName.complex_function || '—'}}</div>
+          </li>
+          <li>
+            <div class="left">适用人群</div>
+            <div class="right">{{propsName.sex || '—'}}</div>
+          </li>
+          <li>
+            <div class="left">适用场合</div>
+            <div class="right">{{propsName.changhe || '—'}}</div>
+          </li>
+          <li>
+            <div class="left">产地</div>
+            <div class="right">{{propsName.manufacturePlace || '—'}}</div>
           </li>
         </ul>
       </div>
@@ -106,6 +138,7 @@
         newOldLevel: {}, //新旧程度
         goodsStock: 1, //商品库存
         homeGoods: 0, //自家商品，0不是自家，1是自家
+        propsName:{},//商品属性
         swiperOption: {
           loop: true,
           pagination: {
@@ -135,6 +168,8 @@
             $this.newOldLevel = res.data.body.newOldLevel;
             $this.goodsStock = res.data.body.goodsStock;
             $this.homeGoods = res.data.body.homeGoods;
+            $this.propsName = res.data.body.propsName;
+            $this.propsName.manufacturePlace = res.data.body.manufacturePlace;
 
             //微信分享
             let data = {
@@ -160,6 +195,7 @@
         // this.baseInfo = {};
         this.otherImageUrlList = [];
         this.sctop = false;
+        this.propsName = {};
       },
       //询价
       askPrice(goodsId, shopId) {

@@ -177,6 +177,12 @@ export const queryActivitys = pams => {
     "params": pams
   })
 };
+//活动0921
+export const queryActivityGoods = pams => {
+  return api.get(`${base}/activityH5Action/queryActivityGoods.json`, {
+    "params": pams
+  })
+};
 
 //微信分享
 export const wxConfig = pams => {

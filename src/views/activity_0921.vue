@@ -1,9 +1,17 @@
 <template>
-  <div id="activity">
+  <div id="activity_0921">
     <!-- <ywBar :title="'有表优选'" type="white"></ywBar> -->
     <div v-if="isApp" class="topBtnRight" @click="shareUrl()"></div>
     <div class="content" ref="bodyhtml">
-      <div class="header"></div>
+      <ywTopLoad v-if="!isApp"></ywTopLoad>
+      <div class="header1"></div>
+      <div class="header2"></div>
+      <div class="header3"></div>
+      <div class="header4"></div>
+      <div class="header5"></div>
+      <div class="header6"></div>
+      <div class="header7"></div>
+      <div class="header8"></div>
       <ul class="actList">
         <!-- <li >@click="toDetail(1)" -->
         <li v-for="(item,index) in infoList" :key="index" @click="toDetail(item.goodId)">
@@ -11,13 +19,15 @@
             <img v-lazy="item.img+'?x-oss-process=image/resize,limit_0,m_fill,w_500,h_500'" width="100%" height="100%">
           </div>
           <div class="info">
-            <h6>{{item.goods.shopInfo.cnName}}</h6>
-            <h5>{{item.name}}</h5>
+            <!-- <h6>{{item.goods.shopInfo.cnName}}</h6> -->
+            <div>
+              <h5>{{item.goods.nameShow}}</h5>
+            </div>
             <p>
               ￥
               <span>{{item.goods.shopPurchasePriceLongShow}}</span>
             </p>
-            <del>¥{{item.marketPrice}}</del>
+            <del>¥{{item.publicPrice}}</del>
             <ywBtn :text="item.goods.availStock>0?'立即购买':'售罄'" class="btn" :class="item.goods.availStock>0?'buy':'noBuy'" @click.native="editAddress()"></ywBtn>
           </div>
         </li>
@@ -28,7 +38,7 @@
 
 <script>
   import {
-    queryActivitys
+    queryActivityGoods
   } from '../api/api'
   export default {
     data() {
@@ -39,7 +49,7 @@
     },
     methods: {
       getData() {
-        queryActivitys({}).then(res => {
+        queryActivityGoods().then(res => {
           let $this = this;
           $this.infoList = res.data.items;
           //   this.ajaxResult(res, function () {
@@ -67,14 +77,14 @@
       },
       handleScroll() {
         let scrollTop = this.$refs.bodyhtml.scrollTop;
-        sessionStorage.setItem("act0918", scrollTop);
+        sessionStorage.setItem("act0921", scrollTop);
       },
       //分享网页
       shareUrl() {
         let device = this.whichDevice();
         let url = window.location.href;
-        let name = '有表优选';
-        let desc = '2折捡漏热门腕表';
+        let name = '”有盟会”集结号:杭州广诚表行';
+        let desc = '广交好友，诚信经营';
         let imgUrl = 'https://youwatch.oss-cn-beijing.aliyuncs.com/system/youwatch_logo.png';
         if (device == "androidApp") {
           window.Android.getShareContent(name, url, desc, imgUrl);
@@ -87,8 +97,8 @@
           });
         }
       },
-      editAddress(){
-        
+      editAddress() {
+
       }
     },
     mounted() {
@@ -98,8 +108,8 @@
       }
     },
     activated() {
-      let name = '有表优选';
-      let desc = '2折捡漏热门腕表';
+      let name = '”有盟会”集结号:杭州广诚表行';
+      let desc = '广交好友，诚信经营';
       let imgUrl = 'https://youwatch.oss-cn-beijing.aliyuncs.com/system/youwatch_logo.png';
       let data = {
         'title': name,
@@ -113,7 +123,11 @@
       if (!this.$route.meta.isBack) {
         this.getData();
       } else {
-        this.$refs.bodyhtml.scrollTop = sessionStorage.getItem("act0918");
+        let device = this.whichDevice();
+        if (device == "androidApp" || device == "iosApp") {
+          this.isApp = true;
+        }
+        this.$refs.bodyhtml.scrollTop = sessionStorage.getItem("act0921");
       }
     },
   };
@@ -121,8 +135,8 @@
 </script>
 
 <style scoped>
-  #activity {
-    background: #2B1818;
+  #activity_0921 {
+    background: #202636;
     height: 100%;
   }
 
@@ -130,15 +144,51 @@
     height: 100%;
     overflow: auto;
     -webkit-overflow-scrolling: touch;
-    padding: 0 0 1.04rem 0;
+    padding: 0 0 0.62rem 0;
     text-align: justify;
     font-size: .28rem;
   }
 
-  .header {
+  .header1 {
     width: 100%;
-    height: 8.2rem;
-    background: url('https://youwatch.oss-cn-beijing.aliyuncs.com/app%2Factivity%2F180918%2Fheader.png') no-repeat top center/100%;
+    height: 8.64rem;
+    background: url('https://youwatch.oss-cn-beijing.aliyuncs.com/app%2Factivity%2F180921%2Fact0921_1.png') no-repeat top center/100%;
+  }
+  .header2 {
+    width: 100%;
+    height: 8.07rem;
+    background: url('https://youwatch.oss-cn-beijing.aliyuncs.com/app%2Factivity%2F180921%2Fact0921_2.png') no-repeat top center/100%;
+  }
+  .header3 {
+    width: 100%;
+    height: 10.76rem;
+    background: url('https://youwatch.oss-cn-beijing.aliyuncs.com/app%2Factivity%2F180921%2Fact0921_3.png') no-repeat top center/100%;
+  }
+  .header4 {
+    width: 100%;
+    height: 5.68rem;
+    background: url('https://youwatch.oss-cn-beijing.aliyuncs.com/app%2Factivity%2F180921%2Fact0921_4.png') no-repeat top center/100%;
+  }
+  .header5 {
+    width: 100%;
+    height: 6.05rem;
+    background: url('https://youwatch.oss-cn-beijing.aliyuncs.com/app%2Factivity%2F180921%2Fact0921_5.png') no-repeat top center/100%;
+  }
+  .header6 {
+    width: 100%;
+    height: 6.05rem;
+    background: url('https://youwatch.oss-cn-beijing.aliyuncs.com/app%2Factivity%2F180921%2Fact0921_6.png') no-repeat top center/100%;
+  }
+  .header7 {
+    width: 100%;
+    height: 4.09rem;
+    background: url('https://youwatch.oss-cn-beijing.aliyuncs.com/app%2Factivity%2F180921%2Fact0921_7.png') no-repeat top center/100%;
+  }
+  .header8 {
+    width: 100%;
+    height: 0.24rem;
+    background: url('https://youwatch.oss-cn-beijing.aliyuncs.com/app%2Factivity%2F180921%2Ftitle1.png') no-repeat top center/contain;
+    margin-bottom: 0.4rem;
   }
 
   ul.actList {
@@ -182,13 +232,20 @@
     margin-top: 0.1rem;
   }
 
+  ul.actList li .info div {
+    height: 1.3rem;
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.15rem;
+  }
+
   ul.actList li .info h5 {
     font-size: .28rem;
     font-family: PingFangSC-Regular;
     font-weight: 400;
     color: rgba(0, 0, 0, 1);
     line-height: 0.35rem;
-    height: 0.7rem;
+    /* height: 0.7rem; */
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
@@ -202,7 +259,7 @@
   ul.actList li .info p {
     font-size: .24rem;
     color: rgba(254, 61, 54, 1);
-    margin-top: 0.24rem;
+    /* margin-top: 0.24rem; */
   }
 
   ul.actList li .info p span {
@@ -217,6 +274,8 @@
     font-weight: 400;
     color: rgba(153, 153, 153, 1);
     display: block;
+    width: 2rem;
+    margin-left: 0.05rem;
   }
 
   .btn {
@@ -252,6 +311,8 @@
     top: 0.3rem;
     right: 0.3rem;
     z-index: 2;
+    /* background-color: #fff; */
+    border-radius: 1rem;
   }
 
 </style>

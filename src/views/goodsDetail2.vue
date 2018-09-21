@@ -76,9 +76,41 @@
       <div class="proAttr">
         <h6>商品属性</h6>
         <ul>
-          <li v-for='(item,index) in productAttributeList' :key="index">
-            <div class="left">{{item.title}}</div>
-            <div class="right">{{item.itemValueShow || '—'}}</div>
+          <li>
+            <div class="left">机芯类型</div>
+            <div class="right">{{propsName.jixinleixing || '—'}}</div>
+          </li>
+          <li>
+            <div class="left">表壳材质</div>
+            <div class="right">{{propsName.watch_metal || '—'}}</div>
+          </li>
+          <li>
+            <div class="left">表带材质</div>
+            <div class="right">{{propsName.dai_metal || '—'}}</div>
+          </li>
+          <li>
+            <div class="left">表盘形状</div>
+            <div class="right">{{propsName.pan_xingzhuang || '—'}}</div>
+          </li>
+          <li>
+            <div class="left">表盘颜色</div>
+            <div class="right">{{propsName.dial_color || '—'}}</div>
+          </li>
+          <li>
+            <div class="left">复杂功能</div>
+            <div class="right">{{propsName.complex_function || '—'}}</div>
+          </li>
+          <li>
+            <div class="left">适用人群</div>
+            <div class="right">{{propsName.sex || '—'}}</div>
+          </li>
+          <li>
+            <div class="left">适用场合</div>
+            <div class="right">{{propsName.changhe || '—'}}</div>
+          </li>
+          <li>
+            <div class="left">产地</div>
+            <div class="right">{{propsName.manufacturePlace || '—'}}</div>
           </li>
         </ul>
       </div>
@@ -153,6 +185,7 @@
         goodsStock: 1, //商品库存
         homeGoods: 0, //自家商品，0不是自家，1是自家
         isCollect: null, //该商品是否收藏，0未收藏，1已收藏，null没有收藏功能
+        propsName:{},//商品属性
         power: 0, //权限，-1都隐藏，0都出现，1询价单个出现，2购买单个出现
         countDownShow: true, //倒计时显示
         countDown: { //倒计时
@@ -189,6 +222,8 @@
             $this.goodsStock = res.data.body.goodsStock;
             $this.homeGoods = res.data.body.homeGoods;
             $this.isCollect = res.data.body.isCollect;
+            $this.propsName = res.data.body.propsName;
+            $this.propsName.manufacturePlace = res.data.body.manufacturePlace;
             $this.rushBuyGoodsItemVO = res.data.body.rushBuyGoodsItemVO;
             if ($this.pageUrl == 'goodsDetail2') {
               $this.proPrice = res.data.body.shopPurchasePrice;
@@ -209,6 +244,7 @@
             };
             // console.log(data);
             $this.wxShare(data);
+            
           });
         }).catch((err) => {
           this.axiosCatch(err, "on");
@@ -292,6 +328,7 @@
         this.isCollect = null;
         this.power = 0;
         this.countDownShow = true;
+        this.propsName = {};
       },
       //询价
       askPrice(goodsId, shopId) {
@@ -366,13 +403,14 @@
         }
       },
       //JS接收OC传值的代码
-      payResult(obj) {
-        this.$alert('测试：' + JSON.stringify(obj));
-        if (obj.ask - price && obj.goods - buy) {
+      payResult(str) {
+        let askPrice = str.indexOf('ask-price') > -1;
+        let goodsBuy = str.indexOf('goods-buy') > -1;
+        if (askPrice && goodsBuy) {
           this.power = 0;
-        } else if (obj.ask - price) {
+        } else if (askPrice) {
           this.power = 1;
-        } else if (obj.goods - buy) {
+        } else if (goodsBuy) {
           this.power = 2;
         }
       }

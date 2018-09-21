@@ -5,7 +5,7 @@
       <div class="shadow"></div>
       <div class="btnBox">
         <p class="footer_price">实付：
-          <span style="color:#EA3C3C;">￥{{goodsInfo.price}}</span>
+          <span style="color:#EA3C3C;">￥{{goodsInfo.actualPrice}}</span>
         </p>
         <ywBtn :class="{'no':!canClick}" class="cBtn cBtn-buy" text="
 确认支付" @click.native="toOrder"></ywBtn>
@@ -26,25 +26,34 @@
         </div>
       </div>
       <div class="c_goodsInfo" v-if="loadingFinish">
-        <h3>{{shopInfo.cnName}}</h3>
+        <h3>{{shopInfo.sellerShopName}}</h3>
         <div class="goodsDetail">
           <div class="goodImg" :style="{'background-image':'url('+goodsInfo.image+')'}"></div>
           <div class="goodinfo">
-            <h6 class="goodName">{{goodsInfo.name}}</h6>
+            <div class="goodName">
+              <h6>{{goodsInfo.name}}</h6>
+              <label v-if="activityName">{{activityName}}</label>
+            </div>
             <div class="good_nums_price">
               <span class="nums">数量 1</span>
-              <span class="amount">¥ {{goodsInfo.price}}</span>
+              <span class="amount">¥ {{goodsInfo.price}}
+                <del v-if="goodsInfo.retailPrice && goodsInfo.retailPrice!=goodsInfo.price">￥{{goodsInfo.retailPrice}}</del>
+              </span>
             </div>
           </div>
         </div>
         <ul class="priceBox">
           <li>
             <span class="p_title">商品金额</span>
-            <span class="p_amout">¥ {{goodsInfo.price}}</span>
+            <span class="p_amout">¥ {{goodsInfo.shopPurchasePrice}}</span>
+          </li>
+          <li v-if="goodsInfo.cheapMoney">
+            <span class="p_title">活动优惠</span>
+            <span class="p_amout">-¥ {{goodsInfo.cheapMoney}}</span>
           </li>
           <li>
             <span class="p_title">运费</span>
-            <span class="p_amout">¥ 0</span>
+            <span class="p_amout">¥ {{goodsInfo.transportFee}}</span>
           </li>
         </ul>
       </div>
@@ -55,6 +64,7 @@
 <script>
   import {
     loadGoodsDetail,
+    cartGoodsDetail,
     listReceiverAddress,
     submitOrder,
     loadReceiverAddress
@@ -69,6 +79,7 @@
         }, //我的地址
         shopInfo: {}, //商家信息
         goodsInfo: {}, //商品信息
+        activityName: '', //活动名称
         loadingFinish: false, //数据请求完成
       }
     },
@@ -103,15 +114,26 @@
       },
       //商品信息
       getGoodsInfo(data) {
-        loadGoodsDetail(data).then(res => {
+        cartGoodsDetail(data).then(res => {
           let $this = this;
           this.ajaxResult(res, function () {
+            let shopPurchasePrice = res.data.body.shopPurchasePrice;
+            let grabPrice = res.data.body.discountActivityGoodsVO ? res.data.body.discountActivityGoodsVO.grabPrice:'';
+            let cheapMoney = res.data.body.cheapMoney;
+            let transportFee = res.data.body.transportFee;
+            let actualPrice = res.data.body.actualPrice;
             $this.loadingFinish = true;
-            $this.shopInfo = res.data.body.shopInfo;
-            $this.goodsInfo.image = res.data.body.imgUrlList.length > 0 ? res.data.body.imgUrlList[0] :
+            $this.activityName = res.data.body.activityName;
+            $this.shopInfo.sellerShopName = res.data.body.sellerShopName;
+            $this.goodsInfo.image = res.data.body.goodsUrlShow ||
               'https://youwatch.oss-cn-beijing.aliyuncs.com/app/img_default.png';
-            $this.goodsInfo.name = res.data.body.name;
-            $this.goodsInfo.price = res.data.body.shopPurchasePrice;
+            $this.goodsInfo.name = res.data.body.goodsName;
+            $this.goodsInfo.price = res.data.body.discountActivityGoodsVO ? grabPrice : res.data.body.shopPurchasePrice;
+            $this.goodsInfo.retailPrice = res.data.body.discountActivityGoodsVO ? shopPurchasePrice : '';
+            $this.goodsInfo.shopPurchasePrice = shopPurchasePrice;
+            $this.goodsInfo.cheapMoney = cheapMoney;
+            $this.goodsInfo.transportFee = transportFee;
+            $this.goodsInfo.actualPrice = actualPrice;
           });
         }).catch((err) => {
           this.axiosCatch(err);
@@ -277,6 +299,7 @@
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
     word-wrap: break-word;
+    word-break: break-all;
     margin-bottom: -0.05rem;
   }
 
@@ -323,11 +346,28 @@
   .goodName {
     min-height: 1rem;
     margin-bottom: .2rem;
+  }
+
+  .goodName h6 {
     font-size: .24rem;
     font-weight: normal;
     color: #333333;
     line-height: .3rem;
     word-wrap: break-word;
+    word-break: break-all;
+  }
+
+  .goodName label {
+    font-size: .22rem;
+    font-family: PingFangSC-Regular;
+    font-weight: 400;
+    color: rgba(234, 60, 60, 1);
+    line-height: .22rem;
+    padding: 3px 5px;
+    border-radius: 3px;
+    border: 1px solid rgba(253, 67, 59, 1);
+    margin-top: 0.1rem;
+    display: inline-block;
   }
 
   .good_nums_price {
@@ -341,6 +381,11 @@
   .good_nums_price .amount {
     font-weight: bold;
     color: #000000;
+  }
+  .good_nums_price .amount del {
+    font-size: .22rem;
+    font-weight: 100;
+    color: #999;
   }
 
   .priceBox li {

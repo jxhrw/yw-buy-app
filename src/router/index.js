@@ -197,6 +197,15 @@ export default new Router({
         isBack:false,
       }
     },
+    //活动地址0921
+    {
+      path: '/act0921',
+      component: resolve => { return require([ '@/views/activity_0921' ], resolve) },
+      meta: {
+        keepAlive: true,
+        isBack:false,
+      }
+    },
     //员工管理
     {
       path: '/staffManage',
@@ -252,6 +261,7 @@ export default new Router({
     //     isBack: false,
     //   }
     // },
+    
     
   ]
 })

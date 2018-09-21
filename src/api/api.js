@@ -90,6 +90,13 @@ export const loadRushBuyGoodsDetail = pams => {
   })
 };
 
+//购物车商品详情
+export const cartGoodsDetail = pams => {
+  return apiToken.get(`${base}/goods-warehouse/goodsShow/cartGoodsDetail`, {
+    "params": pams
+  })
+};
+
 //获取店铺信息
 export const loadShopInfo = pams => {
   return apiToken.get(`${base}/user-center/myShop/loadShopInfo`, {
@@ -189,6 +196,12 @@ export const paymentMethod = pams => {
 //活动0918
 export const queryActivitys = pams => {
   return apiToken.get(`${base}/activityH5Action/queryActivitys.json`, {
+    "params": pams
+  })
+};
+//活动0921
+export const queryActivityGoods = pams => {
+  return apiToken.get(`${base}/activityH5Action/queryActivityGoods.json`, {
     "params": pams
   })
 };

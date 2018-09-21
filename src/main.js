@@ -51,11 +51,13 @@ import ywBtn from './components/ywButton'
 import ywLoading from './components/ywLoading'
 import scrollToTop from './components/scrollToTop'
 import ywBar from './components/ywTopBar'
+import ywTopLoad from './components/ywTopLoad'
 Vue.component('Prolist', Prolist);
 Vue.component('ywBtn', ywBtn);
 Vue.component('ywLoading', ywLoading);
 Vue.component('scrollToTop', scrollToTop);
 Vue.component('ywBar', ywBar);
+Vue.component('ywTopLoad', ywTopLoad);
 
 Vue.config.productionTip = false;
 // simple history management

@@ -39,7 +39,7 @@
     },
     methods: {
       getData() {
-        queryActivitys({}).then(res => {
+        queryActivitys({'code':'2-you'}).then(res => {
           let $this = this;
           $this.infoList = res.data.items;
           //   this.ajaxResult(res, function () {

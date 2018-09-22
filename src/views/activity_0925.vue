@@ -3,6 +3,7 @@
     <!-- <ywBar :title="'有表优选'" type="white"></ywBar> -->
     <div v-if="isApp" class="topBtnRight" @click="shareUrl()"></div>
     <div class="content" ref="bodyhtml">
+      <ywTopLoad v-if="!isApp"></ywTopLoad>
       <div class="header"></div>
       <ul class="actList">
         <!-- <li >@click="toDetail(1)" -->
@@ -14,8 +15,7 @@
             <h6>{{item.goods.shopInfo.cnName}}</h6>
             <h5>{{item.name}}</h5>
             <p>
-              ￥
-              <span>{{item.goods.shopPurchasePriceLongShow}}</span>
+              ￥<span>{{item.goods.shopPurchasePriceLongShow}}</span>
             </p>
             <del>¥{{item.marketPrice}}</del>
             <ywBtn :text="item.goods.availStock>0?'立即购买':'售罄'" class="btn" :class="item.goods.availStock>0?'buy':'noBuy'" @click.native="editAddress()"></ywBtn>
@@ -39,7 +39,9 @@
     },
     methods: {
       getData() {
-        queryActivitys({'code':'921-z'}).then(res => {
+        queryActivitys({
+          'code': '921-z'
+        }).then(res => {
           let $this = this;
           $this.infoList = res.data.items;
           //   this.ajaxResult(res, function () {
@@ -87,8 +89,8 @@
           });
         }
       },
-      editAddress(){
-        
+      editAddress() {
+
       }
     },
     mounted() {
@@ -122,7 +124,7 @@
 
 <style scoped>
   #activity {
-    background: #2B1818;
+    background: #0d0d0f;
     height: 100%;
   }
 
@@ -137,12 +139,13 @@
 
   .header {
     width: 100%;
-    height: 8.2rem;
-    background: url('https://youwatch.oss-cn-beijing.aliyuncs.com/app%2Factivity%2F180918%2Fheader.png') no-repeat top center/100%;
+    height: 7.63rem;
+    background: url('https://youwatch.oss-cn-beijing.aliyuncs.com/app%2Factivity%2F180925%2Fheader.png') no-repeat top center/100%;
   }
 
   ul.actList {
     padding: 0 0.22rem;
+    margin-top: 0.3rem;
   }
 
   ul.actList li {
@@ -252,6 +255,8 @@
     top: 0.3rem;
     right: 0.3rem;
     z-index: 2;
+    background-color: #fff;
+    border-radius: 1rem;
   }
 
 </style>

@@ -24,8 +24,7 @@
               <h5>{{item.goods.nameShow}}</h5>
             </div>
             <p>
-              ￥
-              <span>{{item.goods.shopPurchasePriceLongShow}}</span>
+              ￥<span>{{item.goods.shopPurchasePriceLongShow}}</span>
             </p>
             <del>¥{{item.publicPrice}}</del>
             <ywBtn :text="item.goods.availStock>0?'立即购买':'售罄'" class="btn" :class="item.goods.availStock>0?'buy':'noBuy'" @click.native="editAddress()"></ywBtn>
@@ -311,7 +310,7 @@
     top: 0.3rem;
     right: 0.3rem;
     z-index: 2;
-    /* background-color: #fff; */
+    background-color: #fff;
     border-radius: 1rem;
   }
 

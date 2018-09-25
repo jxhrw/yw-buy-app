@@ -252,6 +252,8 @@
     top: 0.3rem;
     right: 0.3rem;
     z-index: 2;
+    background-color: #fff;
+    border-radius: 1rem;
   }
 
 </style>

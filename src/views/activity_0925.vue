@@ -9,7 +9,7 @@
         <!-- <li >@click="toDetail(1)" -->
         <li v-for="(item,index) in infoList" :key="index" @click="toDetail(item.goodId)">
           <div class="img">
-            <img v-lazy="item.goods.fullPicture+'?x-oss-process=image/resize,limit_0,m_fill,w_500,h_500'" width="100%" height="100%">
+            <img v-lazy="item.img+'?x-oss-process=image/resize,limit_0,m_fill,w_500,h_500'" width="100%" height="100%">
           </div>
           <div class="info">
             <h6>{{item.goods.shopInfo.cnName}}</h6>
@@ -76,7 +76,7 @@
         let device = this.whichDevice();
         let url = window.location.href;
         let name = '有表优选';
-        let desc = '2折捡漏热门腕表';
+        let desc = '劳力士典藏集';
         let imgUrl = 'https://youwatch.oss-cn-beijing.aliyuncs.com/system/youwatch_logo.png';
         if (device == "androidApp") {
           window.Android.getShareContent(name, url, desc, imgUrl);
@@ -101,7 +101,7 @@
     },
     activated() {
       let name = '有表优选';
-      let desc = '2折捡漏热门腕表';
+      let desc = '劳力士典藏集';
       let imgUrl = 'https://youwatch.oss-cn-beijing.aliyuncs.com/system/youwatch_logo.png';
       let data = {
         'title': name,

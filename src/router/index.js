@@ -165,6 +165,15 @@ export default new Router({
         isBack:false,
       }
     },
+    //活动地址0927
+    {
+      path: '/act0927',
+      component: resolve => { return require([ '@/views/activity_0927' ], resolve) },
+      meta: {
+        keepAlive: true,
+        isBack:false,
+      }
+    },
     //活动地址0925
     {
       path: '/act0925',

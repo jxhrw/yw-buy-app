@@ -118,6 +118,13 @@ export const queryDic = pams => {
   })
 };
 
+//字典查询职务列表
+export const shopUserJobs = pams => {
+  return apiToken.get(`${base}/user-center/shopUser/shopUserJobs`, {
+    "params": pams
+  })
+};
+
 //分页查询公告列表
 export const queryAffichePage = pams => {
   return apiToken.get(`${base}/message-provider-service/affiche/queryAffichePage`, {

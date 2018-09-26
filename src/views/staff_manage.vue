@@ -8,7 +8,7 @@
           <li class="my_staff" :key="index" @click="toLook(item.id)">
             <div class="single_staff">
               <p class="one_line">{{item.userInfoVO.nickname || item.username}}</p>
-              <p class="one_line margin_top"><span v-if="item.userInfoVO.phone">{{item.userInfoVO.phone}} | </span>{{item.roleShow}}</p>
+              <p class="one_line margin_top"><span v-if="item.userVO.mobile">{{item.userVO.mobile}} | </span>{{item.roleShow}}</p>
             </div>
           </li>
           </template>
@@ -150,7 +150,7 @@
     min-height: 1rem;
     padding-left: 1.47rem;
     padding-right: 0.3rem;
-    background: url('https://youwatch.oss-cn-beijing.aliyuncs.com/app%2Ficon_radio.png') no-repeat center left/1rem 1rem;
+    background: url('https://youwatch.oss-cn-beijing.aliyuncs.com/app/icon_person.png') no-repeat center left/1rem 1rem;
   }
 
   .one_line {

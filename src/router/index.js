@@ -35,7 +35,7 @@ export default new Router({
       }
     },
     {
-      // 商品详情，适用其他商家，不需要token（由shopHv进）(逻辑goodsDetailH5和goodsDetail2一致)
+      // 商品详情，适用其他商家，不需要token（由shopHv进）(逻辑goodsDetailH5和goodsDetail2一致,现已取消goodsDetailH5)
       path: '/goodsDetHv',
       component: resolve => {
         return require(['@/views/goodsDetail2'], resolve)
@@ -46,7 +46,7 @@ export default new Router({
       }
     },
     {
-      // 商品详情，适用有表市集，不需要token（由app进）,唯一区别：返回直接关闭webview，(逻辑goodsDetailH5和goodsDetail2一致)
+      // 商品详情，适用有表市集，不需要token（由app进）,唯一区别：返回直接关闭webview，(逻辑goodsDetailH5和goodsDetail2一致，现已取消goodsDetailH5)
       path: '/goodsDetail2',
       component: resolve => {
         return require(['@/views/goodsDetail2'], resolve)

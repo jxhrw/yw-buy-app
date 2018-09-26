@@ -4,7 +4,7 @@
     <footer>
       <div class="shadow"></div>
       <div class="btnBox">
-        <ywBtn :text="userEnable=='1'?'禁用':'启用'" :class="['btn_footer_staff', canClick?'':'no']" @click.native="enableFuc"></ywBtn>
+        <ywBtn v-if="role != 'seller_manager'" :text="userEnable=='1'?'禁用':'启用'" :class="['btn_footer_staff', canClick?'':'no']" @click.native="enableFuc"></ywBtn>
         <!-- <ywBtn text="删除" class="btn_footer_staff" @click.native="deleteFuc"></ywBtn> -->
         <ywBtn text="编辑" :class="['btn_footer_staff', canClick?'':'no']" @click.native="editFuc"></ywBtn>
       </div>
@@ -35,6 +35,7 @@
       return {
         canClick: true, //按钮是否可点击
         userEnable:'1',//0禁用，1启用
+        role:'seller_manager',//职务角色，默认店长
         staffInfo: { //员工信息
           nickName: '',
           job: '',
@@ -51,9 +52,10 @@
           let $this = this;
           this.loadingFinish = true;
           this.ajaxResult(res, function () {
+            $this.role = res.data.body.role;
             $this.staffInfo.nickName = res.data.body.userInfoVO.nickname || '—';
             $this.staffInfo.job = res.data.body.roleShow || '—';
-            $this.staffInfo.mobile = res.data.body.userInfoVO.phone || '—';
+            $this.staffInfo.mobile = res.data.body.userVO.mobile || '—';
             $this.userEnable = res.data.body.userVO.userEnable;
           });
         }).catch((err) => {
@@ -97,6 +99,7 @@
       dataInit() {
         this.canClick = true;
         this.userEnable = '1';
+        this.role = 'seller_manager';
         this.staffInfo = {
           nickName: '',
           job: '',

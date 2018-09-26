@@ -125,7 +125,11 @@ export default (Vue) => {
       this.toast(`服务器错误`);
     } else if (status == "fund_error_001") {
       this.toast('该商品库存不足');
-    } else if (!status && message) {
+    }else if (status == "mobile_user_is_exist") {
+      this.toast('该手机号已存在');
+    }else if (status == "shop_user_not_in_this_shop") {
+      this.toast('当前店铺无法操作此员工');
+    }else if (!status && message) {
       this.toast(`${message}`);
     } else if (message && message.length < 20) {
       this.toast(`${message}`);

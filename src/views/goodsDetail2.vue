@@ -59,7 +59,7 @@
           </p>
           <p class="pro_name">{{proName}}</p>
         </div>
-        <div class="collection" @click="collectFuc" v-if="pageUrl!='goodsDetHv' && isCollect!=null">
+        <div class="collection" @click="collectFuc" v-if="pageUrl!='goodsDetHv' && isCollect!=null && proPrice!=-1 && homeGoods!='1'">
           <span class="heart_shape" :class="{'selected':isCollect=='1'}"></span>
           <span>{{isCollect=='1'?'已收藏':'收藏'}}</span>
         </div>
@@ -185,7 +185,7 @@
         goodsStock: 1, //商品库存
         homeGoods: 0, //自家商品，0不是自家，1是自家
         isCollect: null, //该商品是否收藏，0未收藏，1已收藏，null没有收藏功能
-        propsName:{},//商品属性
+        propsName: {}, //商品属性
         power: 0, //权限，-1都隐藏，0都出现，1询价单个出现，2购买单个出现
         countDownShow: true, //倒计时显示
         countDown: { //倒计时
@@ -244,7 +244,7 @@
             };
             // console.log(data);
             $this.wxShare(data);
-            
+
           });
         }).catch((err) => {
           this.axiosCatch(err, "on");
@@ -319,7 +319,7 @@
         this.otherImageUrlList = [];
         this.goodsId = 0;
         this.shopId = 0;
-        this.isApp = true;
+        // this.isApp = true;
         this.canClick = true;
         this.productDesc = '';
         this.newOldLevel = {};
@@ -412,12 +412,13 @@
           this.power = 1;
         } else if (goodsBuy) {
           this.power = 2;
+        } else {
+          this.power = -1;
         }
       }
     },
     mounted() {
       window.payResult = this.payResult;
-
       let device = this.whichDevice();
       this.device = device;
       if (device != "androidApp" && device != "iosApp") {

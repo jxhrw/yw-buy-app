@@ -7,6 +7,11 @@
     </footer>
     <div class="content">
       <ul class="payList">
+        <li v-if="bond" class="bondShow">
+          <h6>￥{{bond}}</h6>
+          <p class="bondTitle">有表门店终端设备保证金</p>
+          <p class="bondDesc">该保证金为有表门店终端的设备押金，若退还设备，该保证金将退还。</p>
+        </li>
         <template v-for="(item,index) in payMethodList">
           <li :key="index" :class="[item.code,item.code==paySelected?'select':'',item.description && item.description.indexOf('余额不足')>-1?'no':'']"
             @click="payChosen(item.code)">
@@ -32,6 +37,7 @@
         canClick: false, //按钮是否可点击
         paySelected: '', //选中的支付方式wxpay
         payMethodList: [], //可选的支付方式,非固定
+        bond: '', //保证金金额
       }
     },
     methods: {
@@ -77,7 +83,11 @@
         let index = JSON.parse(window.sessionStorage.getItem("pageIndex"));
         if (device == "androidApp") {
           try {
-            window.Android.goOrderList();
+            if (this.bond && this.bond!='') {
+              window.Android.goBond();
+            } else {
+              window.Android.goOrderList();
+            }
           } catch (err) {
             try {
               window.Android.finish();
@@ -87,7 +97,11 @@
           }
         } else if (device == "iosApp") {
           try {
-            window.webkit.messageHandlers.goOrderList.postMessage('');
+            if (this.bond && this.bond!='') {
+              window.webkit.messageHandlers.goBond.postMessage('');
+            } else {
+              window.webkit.messageHandlers.goOrderList.postMessage('');
+            }
           } catch (err) {
             try {
               window.webkit.messageHandlers.finish.postMessage('');
@@ -128,6 +142,7 @@
     },
     activated() {
       this.finish = this.$route.query.isBreak == "1";
+      this.bond = this.$route.query.bond;
       this.paymentMethodFuc();
     },
   };
@@ -194,6 +209,36 @@
 
   .payList li:last-child {
     border-bottom: none;
+  }
+
+  .payList .bondShow {
+    display: block;
+    padding: 0.3rem 0.2rem;
+  }
+
+  .payList .bondShow h6 {
+    font-size: .33rem;
+    font-family: PingFangSC-Medium;
+    font-weight: 500;
+    color: rgba(234, 60, 60, 1);
+    line-height: .28rem;
+  }
+
+  .payList .bondShow .bondTitle {
+    font-size: .24rem;
+    font-weight: 400;
+    color: rgba(51, 51, 51, 1);
+    line-height: .24rem;
+    margin-top: 0.22rem;
+  }
+
+  .payList .bondShow .bondDesc {
+    font-size: .24rem;
+    font-weight: 400;
+    color: rgba(153, 153, 153, 1);
+    line-height: .28rem;
+    margin-top: 0.14rem;
+    margin-bottom: 0.2rem;
   }
 
   .ali_pay {

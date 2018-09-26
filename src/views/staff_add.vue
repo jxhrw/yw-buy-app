@@ -4,7 +4,7 @@
     <div class="content">
       <ul class="myInfo" v-if='loadingFinish'>
         <li>
-          <input type="text" placeholder="昵称" v-model="staffInfo.nickName" v-on:input="changeFuc">
+          <input type="text" placeholder="昵称" v-model="staffInfo.nickName" v-on:input="changeFuc" maxlength="40">
         </li>
         <li>
           <p class="on" @click="popupShow=!popupShow" v-if="staffInfo.job[0]">{{staffInfo.job[0]}}</p>
@@ -40,7 +40,7 @@
   import {
     loadShopUser,
     addOrModifyShopUser,
-    queryDic
+    shopUserJobs
   } from '../api/api'
   export default {
     data() {
@@ -76,7 +76,7 @@
           this.ajaxResult(res, function () {
             $this.staffInfo.nickName = res.data.body.userInfoVO.nickname || '';
             $this.staffInfo.job = [res.data.body.roleShow || ''];
-            $this.staffInfo.mobile = res.data.body.userInfoVO.phone || '';
+            $this.staffInfo.mobile = res.data.body.userVO.mobile || '';
           });
         }).catch((err) => {
           this.axiosCatch(err);
@@ -91,7 +91,7 @@
             'id': this.$route.query.id
           });
         }
-        queryDic(data).then(res => {
+        shopUserJobs(data).then(res => {
           this.allListCode = [];
           // this.allListSlots[0].values = [];
           let $this = this;
@@ -133,6 +133,14 @@
           this.$alert({
             title: '',
             content: '信息不完整',
+            btnText: '',
+          });
+          return false;
+        }
+        if (this.staffInfo.nickName.length>40) {
+          this.$alert({
+            title: '',
+            content: '昵称过长',
             btnText: '',
           });
           return false;
@@ -241,10 +249,7 @@
         this.pageUrl = 'staffEdit';
       }
       this.dataInit();
-      this.getRoleList({
-        'type': 'shop_user_type'
-      });
-      //   this.getAddressInfo();
+      this.getRoleList();
     },
   };
 
@@ -287,6 +292,7 @@
     border: none;
     outline: none;
     color: #000;
+    padding: 0;
   }
 
   .myInfo li p {

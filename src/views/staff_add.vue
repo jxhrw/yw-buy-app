@@ -7,7 +7,7 @@
           <input type="text" placeholder="昵称" v-model="staffInfo.nickName" v-on:input="changeFuc" maxlength="40">
         </li>
         <li>
-          <p class="on" @click="popupShow=!popupShow" v-if="staffInfo.job[0]">{{staffInfo.job[0]}}</p>
+          <p class="on" @click="openFuc" v-if="staffInfo.job[0]">{{staffInfo.job[0]}}</p>
           <p v-else @click="openAndChoose">职务</p>
         </li>
         <li>
@@ -184,6 +184,12 @@
           this.canClick = true;
           this.axiosCatch(err);
         });
+      },
+      //是否可选择职务
+      openFuc(){
+        if (this.pageUrl == 'staffAdd') {
+          this.popupShow=!this.popupShow;
+        }
       },
       //阻止冒泡
       stop(event) {

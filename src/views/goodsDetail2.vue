@@ -171,7 +171,7 @@
         proPrice: '', //商品价格,sall代理价，shopPurchase平台采购价，retail零售价
         retailPrice: '', //抢购价格的原先价格
         rushBuyGoodsItemVO: {}, //抢购信息
-        rushBuyStatus: '', //抢购状态
+        rushBuyStatus: '', //抢购状态,1：已结束，2：抢购中，3：在活动时间内未开始，4：非活动时间内未开始
         productAttributeList: [], //商品属性
         shopInfo: {}, //商家信息
         // baseInfo: {}, //基本信息
@@ -252,9 +252,11 @@
       },
       //抢购状态
       postRushBuyStatus(status) {
+        this.rushBuyStatus = status;
         if (status == '1') {
           this.countDownShow = false;
           this.proPrice = this.rushBuyGoodsItemVO.retailPrice;
+          this.retailPrice = '';
         }
         if (status == '2') {
           this.proPrice = this.rushBuyGoodsItemVO.grabPrice;
@@ -263,6 +265,7 @@
         }
         if (status == '3' || status == '4') {
           this.proPrice = this.rushBuyGoodsItemVO.retailPrice;
+          this.retailPrice = '';
           this.countDownFuc(status, this.rushBuyGoodsItemVO.grabStartTime);
         }
       },

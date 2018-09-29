@@ -94,6 +94,12 @@ router.beforeEach(function (to, from, next) {
     to.path !== '/' && history.setItem(to.path, historyCount);
     store.commit('UPDATE_DIRECTION', {direction: 'in'})//forward,向前
   }
+
+  //百度统计
+  if (to.path) {
+    _hmt.push(['_trackPageview', '/#' + to.fullPath]);
+  }
+
   if (/\/http/.test(to.path)) {
     let url = to.path.split('http')[1];
     window.location.href = `http${url}`

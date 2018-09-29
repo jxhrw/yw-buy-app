@@ -12,6 +12,10 @@
           隐私政策
           <mu-icon class="icon_right" value="chevron_right"></mu-icon>
         </li>
+        <li @click="goQrcode">
+          有表商家服务公众号
+          <mu-icon class="icon_right" value="chevron_right"></mu-icon>
+        </li>
       </ul>
     </div>
   </div>
@@ -28,6 +32,11 @@
       goPolicy(){
         this.$router.push({
           path: '/policy'
+        });
+      },
+      goQrcode(){
+        this.$router.push({
+          path: '/qrcode'
         });
       }
     },

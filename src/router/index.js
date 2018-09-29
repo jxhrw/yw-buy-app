@@ -144,6 +144,17 @@ export default new Router({
         isBack: false,
       }
     },
+    //关于我们——有表服务号
+    {
+      path: '/qrcode',
+      component: resolve => {
+        return require(['@/views/about_qrcode'], resolve)
+      },
+      meta: {
+        keepAlive: true,
+        isBack: false,
+      }
+    },
     //确认订单
     {
       path: '/orderFirm',

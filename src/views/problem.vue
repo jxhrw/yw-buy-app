@@ -20,7 +20,8 @@
       <div class="gradient"></div>
       <div class="footer">
         <a class="footBtn" @click="goTel(4000116008)">联系客服</a>
-        <a class="footBtn" style="background-image:linear-gradient(-49deg, #fb6455 0%, #fe3d36 100%);color:#fff;margin-left:.5rem;" @click="popupShow=true">添加微信</a>
+        <ywBtn text='添加微信' class="footBtn" style="background-image:linear-gradient(-49deg, #fb6455 0%, #fe3d36 100%);color:#fff;margin-left:.5rem;"
+          v-clipboard:copy="message" v-clipboard:success="onCopy" v-clipboard:error="onError"></ywBtn>
       </div>
     </footer>
     <!-- 弹窗 -->
@@ -48,6 +49,7 @@
         isOpen: [], //所有列表是否展开，默认全是false
         isDrop: [], //所有列表是否有下拉箭头
         popupShow: false, //弹窗是否展示
+        message: 'youwatchyunying'
       }
     },
     methods: {
@@ -69,7 +71,7 @@
               $this.isDrop.push(false);
             }
           }
-        }).catch((err)=>{
+        }).catch((err) => {
           this.axiosCatch(err);
         });
       },
@@ -99,7 +101,27 @@
       },
       stop(event) {
         event.stopPropagation();
-      }
+      },
+      // 复制成功
+      onCopy(e) {
+        this.$confirm({
+            title: ' ',
+            content: '客服微信<youwatchyunying>已复制到剪贴板，快打开微信去添加吧~',
+            yesText: "取消",
+            noText: '去添加'
+          }).then(res => {}).catch(err => {
+            let device = this.whichDevice();
+            if (device == "androidApp") {
+              window.Android.callWeChat();
+            } else if (device == "iosApp") {
+              window.webkit.messageHandlers.callWeChat.postMessage('');
+            }
+          });
+      },
+      // 复制失败
+      onError(e) {
+        this.toast(`复制失败`);
+      },
     },
     mounted() {
 

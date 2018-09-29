@@ -1,7 +1,7 @@
 <template>
   <div id="goodsDetail">
     <scrollToTop :scTop="sctop" @click.native="goMyTop()" :style="{'position':'absolute','bottom': power>=0?'1.5rem':'0.5rem','right': '0.5rem'}"></scrollToTop>
-    <ywBar v-if="isApp" type="share" :goodsId="goodsId" :shareBtnShow="false"></ywBar>
+    <ywBar v-if="isApp" type="share" :goodsId="goodsId" :goodsName="proName" :goodsImg="slides[0]" :shareBtnShow="false"></ywBar>
     <footer v-if="power>=0">
       <div class="shadow"></div>
       <div class="btnBox">
@@ -186,7 +186,7 @@
         homeGoods: 0, //自家商品，0不是自家，1是自家
         isCollect: null, //该商品是否收藏，0未收藏，1已收藏，null没有收藏功能
         propsName: {}, //商品属性
-        power: 0, //权限，-1都隐藏，0都出现，1询价单个出现，2购买单个出现
+        power: -1, //权限，-1都隐藏，0都出现，1询价单个出现，2购买单个出现
         countDownShow: true, //倒计时显示
         countDown: { //倒计时
           hours: 0,
@@ -238,7 +238,7 @@
 
             //微信分享
             let data = {
-              'title': $this.shopInfo && $this.shopInfo.cnName ? '$this.shopInfo.cnName' : '有表',
+              'title': $this.shopInfo && $this.shopInfo.cnName ? $this.shopInfo.cnName : '有表',
               'desc': $this.proName,
               'imgUrl': $this.slides[0],
             };
@@ -326,7 +326,7 @@
         this.goodsStock = 1;
         this.homeGoods = 0;
         this.isCollect = null;
-        this.power = 0;
+        this.power = -1;
         this.countDownShow = true;
         this.propsName = {};
       },
@@ -428,6 +428,11 @@
     },
     activated() {
       this.dataInit();
+
+      let device = this.whichDevice();
+      if (device == "androidApp") {
+        this.power = 0;
+      }
 
       let thisPageUrl = window.location.href;
       if (thisPageUrl.indexOf('goodsDetail2') > -1) {

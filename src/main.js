@@ -45,6 +45,10 @@ Vue.use(VueLazyLoad,{
     loading:'https://youwatch.oss-cn-beijing.aliyuncs.com/app%2Fimg_default.png'
 })
 
+//复制到剪切板
+import VueClipboard from 'vue-clipboard2'
+Vue.use(VueClipboard)
+
 //自定义组件
 import Prolist from './components/proList'
 import ywBtn from './components/ywButton'

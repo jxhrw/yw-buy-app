@@ -140,7 +140,7 @@
 
   .mu-infinite-scroll {
     background-color: #fafafa !important;
-    height: .6rem !important;
+    height: 1rem !important;
     padding: .2rem 0 0.2rem 0 !important;
   }
 

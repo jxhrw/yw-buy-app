@@ -1,7 +1,7 @@
 <template>
   <div id="goodsDetail">
     <scrollToTop :scTop="sctop" @click.native="goMyTop()" :style="{'position':'absolute','bottom': '0.5rem','right': '0.5rem'}"></scrollToTop>
-    <ywBar v-if="isApp" type="share" :goodsId="goodsId"></ywBar>
+    <ywBar v-if="isApp" type="share" :goodsId="goodsId" :goodsName="proName" :goodsImg="slides[0]"></ywBar>
     <div class="content" ref="content" style="padding-bottom:0;">
       <div class="banner">
         <div class='swiperImg' v-if="slides.length==1" :style="{'background-image':'url('+slides[0]+')'}"></div>

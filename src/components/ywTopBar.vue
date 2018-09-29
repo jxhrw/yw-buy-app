@@ -6,7 +6,7 @@
   </header>
   <header v-else-if="type=='share' && isShow" class="shareHeader">
     <span class="iconShareBtn iconShareBtn1" @click="historyBack()"></span>
-    <span v-if="shareBtnShow" class="iconShareBtn iconShareBtn2" @click="share(goodsId)"></span>
+    <span v-if="shareBtnShow" class="iconShareBtn iconShareBtn2" @click="share(goodsId,goodsName,goodsDesc,goodsImg)"></span>
   </header>
   <header v-else-if="type=='white' && isShow" class="whiteHeader">
     <mu-icon value="chevron_left" right class="iconBtn" @click="historyBack()"></mu-icon>
@@ -40,6 +40,18 @@
       goodsId: {
         type: Number,
         default: 0
+      },
+      goodsName: {
+        type: String,
+        default: ""
+      },
+      goodsDesc: {
+        type: String,
+        default: "给你推荐一个不错的手表，快来看看吧~"
+      },
+      goodsImg: {
+        type: String,
+        default: ""
       },
       shareBtnShow: {
         type: Boolean,
@@ -102,13 +114,20 @@
           window.history.back();
         }
       },
-      share(id) {
-        this.pagePointBurial('spxq_spfx','商品详情页中商品分享按钮');
+      share(id, name, desc, imgUrl) {
+        this.pagePointBurial('spxq_spfx', '商品详情页中商品分享按钮');
+        let url = window.location.href.split("#/")[0] + "#/goodsDetHv?goodsId=" + id;
         let device = this.whichDevice();
         if (device == "androidApp") {
-          window.Android.getGoodsId(id);
+          window.Android.getGoodsId(id, url, name, desc, imgUrl);
         } else if (device == "iosApp") {
-          window.webkit.messageHandlers.getGoodsId.postMessage(id);
+          window.webkit.messageHandlers.getGoodsId.postMessage({
+            id: id,
+            title: name,
+            content: desc,
+            url: url,
+            iconImg: imgUrl
+          });
         }
       }
     }

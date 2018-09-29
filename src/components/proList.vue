@@ -10,7 +10,7 @@
           <p class="itPrice">
             <span>￥</span>{{item.salePriceShow}}</p>
           <p class="itShopName">{{item.shopCnName}}</p>
-          <p v-if="isShare" class="shareIcon" :style="{'background-image':'url('+imgShare+')'}" @click="share(item.goodsId)"></p>
+          <p v-if="isShare" class="shareIcon" :style="{'background-image':'url('+imgShare+')'}" @click="share(item.goodsId,item.name,'给你推荐一个不错的手表，快来看看吧~',item.image)"></p>
         </div>
       </li>
     </template>
@@ -18,8 +18,8 @@
   </ul>
 </template>
 <script>
-// isShare 是否可分享（是否是app）
-// isSelf 是否是自个商家
+  // isShare 是否可分享（是否是app）
+  // isSelf 是否是自个商家
   import imgShare from '@/assets/imgs/icon_share2.png'
   export default {
     props: {
@@ -48,10 +48,12 @@
       }
     },
     methods: {
-      jumpHref(id,url) {
-        this.pagePointBurial('wdmd_jrsx','我的门店中进入商品详情页');
-        let pathMy = this.isSelf ? '/goodsDetail':'/goodsDetHv';
-        let obj = {'goodsAgentId':id};
+      jumpHref(id, url) {
+        this.pagePointBurial('wdmd_jrsx', '我的门店中进入商品详情页');
+        let pathMy = this.isSelf ? '/goodsDetail' : '/goodsDetHv';
+        let obj = {
+          'goodsAgentId': id
+        };
         // let pathUrl = url;
         this.$emit('headCallBack', false);
         this.$router.push({
@@ -59,19 +61,25 @@
           query: obj
         });
       },
-      share(id) {
-        this.pagePointBurial('wdmd_spfx','我的门店中商品分享按钮');
+      share(id, name, desc, imgUrl) {
+        this.pagePointBurial('wdmd_spfx', '我的门店中商品分享按钮');
         event.stopPropagation();
+        let url = window.location.href.split("#/")[0] + "#/goodsDetHv?goodsId=" + id;
         let device = this.whichDevice();
         if (device == "androidApp") {
-          window.Android.getGoodsId(id);
+          window.Android.getGoodsId(id, url, name, desc, imgUrl);
         } else if (device == "iosApp") {
-           window.webkit.messageHandlers.getGoodsId.postMessage(id);
+          window.webkit.messageHandlers.getGoodsId.postMessage({
+            id: id,
+            title: name,
+            content: desc,
+            url: url,
+            iconImg: imgUrl
+          });
         }
       }
     },
-    mounted() {
-    },
+    mounted() {},
   }
 
 </script>

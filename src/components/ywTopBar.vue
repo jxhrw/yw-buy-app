@@ -119,15 +119,23 @@
         let url = window.location.href.split("#/")[0] + "#/goodsDetHv?goodsId=" + id;
         let device = this.whichDevice();
         if (device == "androidApp") {
-          window.Android.getGoodsId(id, url, name, desc, imgUrl);
+          try {
+            window.Android.getShareInfo(id, url, name, desc, imgUrl);
+          } catch (err) {
+            window.Android.getGoodsId(id);
+          }
         } else if (device == "iosApp") {
-          window.webkit.messageHandlers.getGoodsId.postMessage({
-            id: id,
-            title: name,
-            content: desc,
-            url: url,
-            iconImg: imgUrl
-          });
+          try {
+            window.webkit.messageHandlers.getShareInfo.postMessage({
+              id: id,
+              title: name,
+              content: desc,
+              url: url,
+              iconImg: imgUrl
+            });
+          } catch (err) {
+            window.webkit.messageHandlers.getGoodsId.postMessage(id);
+          }
         }
       }
     }

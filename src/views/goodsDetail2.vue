@@ -32,7 +32,7 @@
           <div class="swiper-pagination" slot="pagination"></div>
         </swiper>
       </div>
-      <div class="rush_buy" v-if="pageUrl=='goodsDetRush'">
+      <div class="rush_buy" v-if="pageUrl=='goodsDetRush' && '{}'!=JSON.stringify(rushBuyGoodsItemVO)">
         <div class="rb_price">
           <span class="rb_p1">每日捡漏</span>
           <span class="rb_p2" v-if="rushBuyStatus">{{rushBuyStatus=='1'?'抢购结束':(rushBuyStatus=='2'?'抢购中':'抢购价 ￥')}}</span>
@@ -224,7 +224,7 @@
             $this.isCollect = res.data.body.isCollect;
             $this.propsName = res.data.body.propsName;
             $this.propsName.manufacturePlace = res.data.body.manufacturePlace;
-            $this.rushBuyGoodsItemVO = res.data.body.rushBuyGoodsItemVO;
+            $this.rushBuyGoodsItemVO = res.data.body.rushBuyGoodsItemVO || {};
             if ($this.pageUrl == 'goodsDetail2') {
               $this.proPrice = res.data.body.shopPurchasePrice;
             }
@@ -232,8 +232,10 @@
               $this.proPrice = res.data.body.retailPrice || res.data.body.salePrice;
             }
             if ($this.pageUrl == 'goodsDetRush') {
-              $this.rushBuyStatus = $this.rushBuyGoodsItemVO.activityStatus;
-              $this.postRushBuyStatus($this.rushBuyStatus);
+              if ('{}' != JSON.stringify($this.rushBuyGoodsItemVO)) {
+                $this.rushBuyStatus = $this.rushBuyGoodsItemVO.activityStatus;
+                $this.postRushBuyStatus($this.rushBuyStatus);
+              }
             }
 
             //微信分享
@@ -247,6 +249,7 @@
 
           });
         }).catch((err) => {
+          console.log(err);
           this.axiosCatch(err, "on");
         });
       },
@@ -255,16 +258,16 @@
         this.rushBuyStatus = status;
         if (status == '1') {
           this.countDownShow = false;
-          this.proPrice = this.rushBuyGoodsItemVO.retailPrice;
+          this.proPrice = this.rushBuyGoodsItemVO.shopPurchasePrice;
           this.retailPrice = '';
         }
         if (status == '2') {
           this.proPrice = this.rushBuyGoodsItemVO.grabPrice;
-          this.retailPrice = this.rushBuyGoodsItemVO.retailPrice;
+          this.retailPrice = this.rushBuyGoodsItemVO.shopPurchasePrice;
           this.countDownFuc(status, this.rushBuyGoodsItemVO.activityEndTime);
         }
         if (status == '3' || status == '4') {
-          this.proPrice = this.rushBuyGoodsItemVO.retailPrice;
+          this.proPrice = this.rushBuyGoodsItemVO.shopPurchasePrice;
           this.retailPrice = '';
           this.countDownFuc(status, this.rushBuyGoodsItemVO.grabStartTime);
         }
@@ -329,7 +332,7 @@
         this.goodsStock = 1;
         this.homeGoods = 0;
         this.isCollect = null;
-        this.power = -1;
+        // this.power = -1;
         this.countDownShow = true;
         this.propsName = {};
       },
@@ -353,6 +356,7 @@
           })
         }).catch((err) => {
           this.canClick = true;
+          console.log(err);
           this.axiosCatch(err, "load");
         });
       },
@@ -388,12 +392,12 @@
       },
       //收藏和取消收藏
       collectFuc() {
-        //debugger;
         if (this.isCollect == 1) {
           this.isCollect = 0;
           cancelCollect({
             "goodsId": this.goodsId
           }).then(res => {}).catch((err) => {
+            console.log(err);
             this.axiosCatch(err, "on");
           });
         } else {
@@ -401,6 +405,7 @@
           collect({
             "goodsId": this.goodsId
           }).then(res => {}).catch((err) => {
+            console.log(err);
             this.axiosCatch(err, "on");
           });
         }
@@ -433,7 +438,8 @@
       this.dataInit();
 
       let device = this.whichDevice();
-      if (device == "androidApp") {
+      if (device == "androidApp" || device == "iosApp") {
+        let $this = this;
         this.power = 0;
       }
 

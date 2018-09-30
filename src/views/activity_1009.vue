@@ -40,7 +40,7 @@
     methods: {
       getData() {
         queryActivitys({
-          'code': '106-y'
+          'code': '109-b'
         }).then(res => {
           let $this = this;
           $this.infoList = res.data.items;
@@ -69,14 +69,14 @@
       },
       handleScroll() {
         let scrollTop = this.$refs.bodyhtml.scrollTop;
-        sessionStorage.setItem("act1006", scrollTop);
+        sessionStorage.setItem("act1009", scrollTop);
       },
       //分享网页
       shareUrl() {
         let device = this.whichDevice();
         let url = window.location.href;
         let name = '有表优选';
-        let desc = '十月好价购表指南';
+        let desc = '欧米茄品鉴汇';
         let imgUrl = 'https://youwatch.oss-cn-beijing.aliyuncs.com/system/youwatch_logo.png';
         if (device == "androidApp") {
           window.Android.getShareContent(name, url, desc, imgUrl);
@@ -101,7 +101,7 @@
     },
     activated() {
       let name = '有表优选';
-      let desc = '十月好价购表指南';
+      let desc = '欧米茄品鉴汇';
       let imgUrl = 'https://youwatch.oss-cn-beijing.aliyuncs.com/system/youwatch_logo.png';
       let data = {
         'title': name,
@@ -115,7 +115,7 @@
       if (!this.$route.meta.isBack) {
         this.getData();
       } else {
-        this.$refs.bodyhtml.scrollTop = sessionStorage.getItem("act1006");
+        this.$refs.bodyhtml.scrollTop = sessionStorage.getItem("act1009");
       }
     },
   };
@@ -124,7 +124,7 @@
 
 <style scoped>
   #activity {
-    background: rgba(73,49,37,1);
+    background: #452E22;
     height: 100%;
   }
 
@@ -140,13 +140,13 @@
   .header {
     width: 100%;
     height: 7.73rem;
-    background: url('https://youwatch.oss-cn-beijing.aliyuncs.com/app/activity/181006/header.png') no-repeat top center/100%;
+    background: url('https://youwatch.oss-cn-beijing.aliyuncs.com/app/activity/181009/header.png') no-repeat top center/100%;
   }
 
   ul.actList {
     padding: 0 0.22rem;
     /* margin-top: 0.3rem; */
-    background:linear-gradient(180deg,rgba(73,49,37,0) 0%,rgba(73,49,37,1) 100%);;
+    background:linear-gradient(180deg,rgba(73,49,37,0) 0%,rgba(73,49,37,1) 100%);
   }
 
   ul.actList li {

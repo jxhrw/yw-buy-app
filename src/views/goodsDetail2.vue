@@ -38,7 +38,7 @@
           <span class="rb_p2" v-if="rushBuyStatus">{{rushBuyStatus=='1'?'抢购结束':(rushBuyStatus=='2'?'抢购中':'抢购价 ￥')}}</span>
           <span class="rb_p3" v-if="rushBuyStatus=='3'||rushBuyStatus=='4'">{{rushBuyGoodsItemVO.grabPrice}}</span>
         </div>
-        <div class="rb_time" v-if="countDownShow">
+        <div class="rb_time" v-if="countDownShow" @click="toRushList">
           <span class="rb_t1">{{rushBuyStatus=='3'||rushBuyStatus=='4'?'距开始':'距结束'}}</span>
           <span class="rb_t2">
             <i>{{10>countDown.hours?'0':''}}{{countDown.hours}}</i> :
@@ -417,6 +417,15 @@
             console.log(err);
             this.axiosCatch(err, "on");
           });
+        }
+      },
+      //去抢购列表
+      toRushList() {
+        let device = this.whichDevice();
+        if (device == "androidApp") {
+          window.Android.goRushList();
+        } else if (device == "iosApp") {
+          window.webkit.messageHandlers.goRushList.postMessage('');
         }
       },
       //JS接收OC传值的代码

@@ -232,9 +232,12 @@
               $this.proPrice = res.data.body.retailPrice || res.data.body.salePrice;
             }
             if ($this.pageUrl == 'goodsDetRush') {
+
               if ('{}' != JSON.stringify($this.rushBuyGoodsItemVO)) {
                 $this.rushBuyStatus = $this.rushBuyGoodsItemVO.activityStatus;
                 $this.postRushBuyStatus($this.rushBuyStatus);
+              } else {
+                $this.postRushBuyStatus("1");
               }
             }
 
@@ -257,6 +260,8 @@
       postRushBuyStatus(status) {
         this.rushBuyStatus = status;
         if (status == '1') {
+          let $this = this;
+          this.activatedFuc('goodsDetail2');
           this.countDownShow = false;
           this.proPrice = this.rushBuyGoodsItemVO.shopPurchasePrice;
           this.retailPrice = '';
@@ -396,7 +401,9 @@
           this.isCollect = 0;
           cancelCollect({
             "goodsId": this.goodsId
-          }).then(res => {}).catch((err) => {
+          }).then(res => {
+            this.ajaxResult(res, function () {});
+          }).catch((err) => {
             console.log(err);
             this.axiosCatch(err, "on");
           });
@@ -404,7 +411,9 @@
           this.isCollect = 1;
           collect({
             "goodsId": this.goodsId
-          }).then(res => {}).catch((err) => {
+          }).then(res => {
+            this.ajaxResult(res, function () {});
+          }).catch((err) => {
             console.log(err);
             this.axiosCatch(err, "on");
           });
@@ -423,6 +432,57 @@
         } else {
           this.power = -1;
         }
+      },
+
+      //activated执行的方法
+      activatedFuc(introduction) {
+        this.dataInit();
+
+        let device = this.whichDevice();
+        if (device == "androidApp" || device == "iosApp") {
+          let $this = this;
+          this.power = 0;
+        }
+
+        let thisPageUrl = window.location.href;
+        if (introduction) {
+          this.pageUrl = introduction;
+        } else if (thisPageUrl.indexOf('goodsDetail2') > -1) {
+          this.pageUrl = 'goodsDetail2';
+        } else if (thisPageUrl.indexOf('goodsDetHv') > -1) {
+          this.pageUrl = 'goodsDetHv';
+        } else if (thisPageUrl.indexOf('goodsDetRush') > -1) {
+          this.pageUrl = 'goodsDetRush';
+        }
+
+        let goodsId = this.$route.query.goodsId;
+        let agentId = this.$route.query.goodsAgentId;
+        let activityId = this.$route.query.activityId;
+        let obj = {};
+        if (this.pageUrl == 'goodsDetail2') {
+          this.pagePointBurial('spxqb2b', '商品详情页b2b');
+          obj = {
+            'goodsId': goodsId
+          }
+        }
+        if (this.pageUrl == 'goodsDetRush') {
+          obj = {
+            'goodsId': goodsId,
+            'activityId': activityId,
+          }
+        }
+        if (this.pageUrl == 'goodsDetHv') {
+          if (agentId) {
+            obj = {
+              'agentId': agentId
+            }
+          } else if (goodsId) {
+            obj = {
+              'goodsId': goodsId
+            }
+          }
+        }
+        this.detailInfo(obj);
       }
     },
     mounted() {
@@ -435,52 +495,7 @@
       this.$refs.content.addEventListener('scroll', this.handleScroll);
     },
     activated() {
-      this.dataInit();
-
-      let device = this.whichDevice();
-      if (device == "androidApp" || device == "iosApp") {
-        let $this = this;
-        this.power = 0;
-      }
-
-      let thisPageUrl = window.location.href;
-      if (thisPageUrl.indexOf('goodsDetail2') > -1) {
-        this.pageUrl = 'goodsDetail2';
-      } else if (thisPageUrl.indexOf('goodsDetHv') > -1) {
-        this.pageUrl = 'goodsDetHv';
-      } else if (thisPageUrl.indexOf('goodsDetRush') > -1) {
-        this.pageUrl = 'goodsDetRush';
-      }
-
-      let goodsId = this.$route.query.goodsId;
-      let agentId = this.$route.query.goodsAgentId;
-      let activityId = this.$route.query.activityId;
-      let obj = {};
-      if (this.pageUrl == 'goodsDetail2') {
-        this.pagePointBurial('spxqb2b', '商品详情页b2b');
-        obj = {
-          'goodsId': goodsId
-        }
-      }
-      if (this.pageUrl == 'goodsDetRush') {
-        obj = {
-          'goodsId': goodsId,
-          'activityId': activityId,
-        }
-      }
-      if (this.pageUrl == 'goodsDetHv') {
-        if (agentId) {
-          obj = {
-            'agentId': agentId
-          }
-        } else if (goodsId) {
-          obj = {
-            'goodsId': goodsId
-          }
-        }
-      }
-      this.detailInfo(obj);
-
+      this.activatedFuc();
     },
     deactivated: function () {
       console.log("我已经离开了！");

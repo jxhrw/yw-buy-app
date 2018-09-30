@@ -1,6 +1,6 @@
 <template>
   <div id="payChannel">
-    <ywBar :title="'选择付款方式'" type="white" :finishView="finish" :backFuc="sureBack" :hasBackFuc="true"></ywBar>
+    <ywBar :title="'选择付款方式'" type="white" :finishView="isBreak" :backFuc="sureBack" :hasBackFuc="true"></ywBar>
     <footer>
       <ywBtn :class="{'no':!canClick}" class="cBtn cBtn-buy" text="
 确认付款" @click.native="toPay"></ywBtn>
@@ -33,7 +33,7 @@
   export default {
     data() {
       return {
-        finish: false, //是否要结束页面
+        isBreak: false, //是否要结束页面
         canClick: false, //按钮是否可点击
         paySelected: '', //选中的支付方式wxpay
         payMethodList: [], //可选的支付方式,非固定
@@ -141,7 +141,7 @@
 
     },
     activated() {
-      this.finish = this.$route.query.isBreak == "1";
+      this.isBreak = this.$route.query.isBreak == "1";
       this.bond = this.$route.query.bond;
       this.paymentMethodFuc();
     },

@@ -5,7 +5,7 @@
       <div class="flex">
         <div class="icon"></div>
         <h6>有表商家版</h6>
-        <h6>v1.0.0</h6>
+        <h6>v1.2.0</h6>
       </div>
       <ul class="list">
         <li @click="goPolicy">

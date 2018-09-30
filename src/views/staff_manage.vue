@@ -5,12 +5,13 @@
       <div class="body" id="body_content">
         <ul>
           <template v-for="(item,index) in staffList">
-          <li class="my_staff" :key="index" @click="toLook(item.id)">
-            <div class="single_staff">
-              <p class="one_line">{{item.userInfoVO.nickname || item.username}}</p>
-              <p class="one_line margin_top"><span v-if="item.userVO.mobile">{{item.userVO.mobile}} | </span>{{item.roleShow}}</p>
-            </div>
-          </li>
+            <li class="my_staff" :key="index" @click="toLook(item.id)">
+              <div class="single_staff">
+                <p class="one_line">{{item.userInfoVO.nickname || item.username}}</p>
+                <p class="one_line margin_top">
+                  <span v-if="item.userVO.mobile">{{item.userVO.mobile}} | </span>{{item.roleShow}}</p>
+              </div>
+            </li>
           </template>
         </ul>
       </div>
@@ -47,7 +48,7 @@
             $this.pageInfo = res.data.body;
           });
         }).catch((err) => {
-          this.axiosCatch(err);
+          this.axiosCatch(err, "on");
         });
       },
       //去新增员工
@@ -87,9 +88,9 @@
         }
       },
       //页面数据初始化
-      dataInit(){
+      dataInit() {
         this.staffList = [];
-        this.isLoading = false; 
+        this.isLoading = false;
         this.pageInfo = {};
         this.listData = {
           index: 1,

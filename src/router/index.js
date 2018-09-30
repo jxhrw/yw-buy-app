@@ -244,6 +244,15 @@ export default new Router({
         isBack:false,
       }
     },
+    //活动地址1006
+    {
+      path: '/act1006',
+      component: resolve => { return require([ '@/views/activity_1006' ], resolve) },
+      meta: {
+        keepAlive: true,
+        isBack:false,
+      }
+    },
     //活动地址0925
     {
       path: '/act0925',
@@ -291,6 +300,17 @@ export default new Router({
       path: '/staffInfo',
       component: resolve => {
         return require(['@/views/staff_info'], resolve)
+      },
+      meta: {
+        keepAlive: true,
+        isBack: false,
+      }
+    },
+    //有表鉴定：清洗打磨
+    {
+      path: '/appraisal',
+      component: resolve => {
+        return require(['@/views/appraisal'], resolve)
       },
       meta: {
         keepAlive: true,

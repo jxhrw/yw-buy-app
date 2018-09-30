@@ -129,37 +129,37 @@
   .header1 {
     width: 100%;
     height: 15.25rem;
-    background: url('https://youwatch.oss-cn-beijing.aliyuncs.com/activity/appraisal/1.png') no-repeat top center/100%;
+    background: url('https://youwatch.oss-cn-beijing.aliyuncs.com/app/activity/appraisal/1.png') no-repeat top center/100%;
   }
 
   .header2 {
     width: 100%;
     height: 10.25rem;
-    background: url('https://youwatch.oss-cn-beijing.aliyuncs.com/activity/appraisal/2.png') no-repeat top center/100%;
+    background: url('https://youwatch.oss-cn-beijing.aliyuncs.com/app/activity/appraisal/2.png') no-repeat top center/100%;
   }
 
   .header3 {
     width: 100%;
     height: 6.28rem;
-    background: url('https://youwatch.oss-cn-beijing.aliyuncs.com/activity/appraisal/3.png') no-repeat top center/100%;
+    background: url('https://youwatch.oss-cn-beijing.aliyuncs.com/app/activity/appraisal/3.png') no-repeat top center/100%;
   }
 
   .header4 {
     width: 100%;
     height: 8.18rem;
-    background: url('https://youwatch.oss-cn-beijing.aliyuncs.com/activity/appraisal/4.png') no-repeat top center/100%;
+    background: url('https://youwatch.oss-cn-beijing.aliyuncs.com/app/activity/appraisal/4.png') no-repeat top center/100%;
   }
 
   .header5 {
     width: 100%;
     height: 11.61rem;
-    background: url('https://youwatch.oss-cn-beijing.aliyuncs.com/activity/appraisal/5.png') no-repeat top center/100%;
+    background: url('https://youwatch.oss-cn-beijing.aliyuncs.com/app/activity/appraisal/5.png') no-repeat top center/100%;
   }
 
   .header6 {
     width: 100%;
     height: 19.34rem;
-    background: url('https://youwatch.oss-cn-beijing.aliyuncs.com/activity/appraisal/6.png') no-repeat top center/100%;
+    background: url('https://youwatch.oss-cn-beijing.aliyuncs.com/app/activity/appraisal/6.png') no-repeat top center/100%;
   }
 
   .headera {
@@ -186,16 +186,16 @@
   }
 
   ul.nowrap li.headera1 {
-    background: url('https://youwatch.oss-cn-beijing.aliyuncs.com/activity/appraisal/a1.png') no-repeat top center/100%;
+    background: url('https://youwatch.oss-cn-beijing.aliyuncs.com/app/activity/appraisal/a1.png') no-repeat top center/100%;
   }
 
   ul.nowrap li.headera2 {
     margin: 0 0.12rem;
-    background: url('https://youwatch.oss-cn-beijing.aliyuncs.com/activity/appraisal/a2.png') no-repeat top center/100%;
+    background: url('https://youwatch.oss-cn-beijing.aliyuncs.com/app/activity/appraisal/a2.png') no-repeat top center/100%;
   }
 
   ul.nowrap li.headera3 {
-    background: url('https://youwatch.oss-cn-beijing.aliyuncs.com/activity/appraisal/a3.png') no-repeat top center/100%;
+    background: url('https://youwatch.oss-cn-beijing.aliyuncs.com/app/activity/appraisal/a3.png') no-repeat top center/100%;
   }
 
   .topBtnRight {

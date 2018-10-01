@@ -100,7 +100,9 @@
         placeholder: "\ue6d1 搜索", //&#xe6d1;
         fewTimes: 0, //页面第几次进入，刷新或第一次会在mounted里重置,其余次数获取scrollTop使页面回到离开位置
         pageInfo: {}, //分页信息
-        shopInfoTxt: {}, //店铺信息
+        shopInfoTxt: {
+          fullLogoUrl:'https://youwatch.oss-cn-beijing.aliyuncs.com/app/img_default.png'
+        }, //店铺信息
         isLoading: false, //是否正在请求中
         refreshing: false, //下拉loading
         loading: false, //底部loading

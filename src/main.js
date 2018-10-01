@@ -18,6 +18,9 @@ Vue.use(publicJs);
 import MuseUI from 'muse-ui';
 import 'muse-ui/dist/muse-ui.css';
 Vue.use(MuseUI);
+
+import 'material-icons/iconfont/material-icons.css';
+
 //提示框
 import {Alert,Confirm} from 'wc-messagebox'
 import 'wc-messagebox/style.css'

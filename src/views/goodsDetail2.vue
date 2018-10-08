@@ -448,7 +448,8 @@
         this.dataInit();
 
         let device = this.whichDevice();
-        if (device == "androidApp" || device == "iosApp") {
+        if (device == "androidApp" ) {
+        // if (device == "androidApp" || device == "iosApp") {
           let $this = this;
           this.power = 0;
         }

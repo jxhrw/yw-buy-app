@@ -76,7 +76,7 @@
         let device = this.whichDevice();
         let url = window.location.href;
         let name = '有表优选';
-        let desc = '欧米茄品鉴汇';
+        let desc = '卡地亚星品汇';
         let imgUrl = 'https://youwatch.oss-cn-beijing.aliyuncs.com/system/youwatch_logo.png';
         if (device == "androidApp") {
           window.Android.getShareContent(name, url, desc, imgUrl);
@@ -101,7 +101,7 @@
     },
     activated() {
       let name = '有表优选';
-      let desc = '欧米茄品鉴汇';
+      let desc = '卡地亚星品汇';
       let imgUrl = 'https://youwatch.oss-cn-beijing.aliyuncs.com/system/youwatch_logo.png';
       let data = {
         'title': name,
@@ -124,7 +124,7 @@
 
 <style scoped>
   #activity {
-    background: #452E22;
+    background: #000000;
     height: 100%;
   }
 
@@ -146,7 +146,7 @@
   ul.actList {
     padding: 0 0.22rem;
     /* margin-top: 0.3rem; */
-    background:linear-gradient(180deg,rgba(73,49,37,0) 0%,rgba(73,49,37,1) 100%);
+    background:linear-gradient(180deg,rgba(0,0,0,0) 0%,rgba(0,0,0,1) 100%);
   }
 
   ul.actList li {

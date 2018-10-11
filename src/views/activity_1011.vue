@@ -40,7 +40,7 @@
     methods: {
       getData() {
         queryActivitys({
-          'code': '109-b'
+          'code': '1011-a'
         }).then(res => {
           let $this = this;
           $this.infoList = res.data.items;

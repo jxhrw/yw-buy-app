@@ -450,8 +450,8 @@
         let device = this.whichDevice();
         if (device == "androidApp" ) {
         // if (device == "androidApp" || device == "iosApp") {
-          let $this = this;
-          this.power = 0;
+          // let $this = this;
+          // this.power = 0;
         }
 
         let thisPageUrl = window.location.href;
